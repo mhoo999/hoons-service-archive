@@ -60,12 +60,23 @@ export default function Home() {
             return { ...service, updatedAt: '레포지토리 없음' }
           }
 
-          const commitDate = await getLatestCommitDate(service.repository)
-          if (!commitDate) {
+          try {
+            const response = await fetch(`/api/github/commits?repository=${encodeURIComponent(service.repository)}`)
+            if (!response.ok) {
+              console.error(`Failed to fetch commit date for ${service.repository}:`, response.status)
+              return { ...service, updatedAt: '정보 없음' }
+            }
+
+            const data = await response.json()
+            if (!data.date) {
+              return { ...service, updatedAt: '정보 없음' }
+            }
+
+            return { ...service, updatedAt: data.date }
+          } catch (error) {
+            console.error(`Error fetching commit date for ${service.repository}:`, error)
             return { ...service, updatedAt: '정보 없음' }
           }
-
-          return { ...service, updatedAt: commitDate }
         })
       )
 
