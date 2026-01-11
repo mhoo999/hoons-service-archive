@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app:*)",
+      "Bash(npm init:*)",
+      "Bash(npm install)",
+      "Bash(npm run dev)",
+      "Bash(timeout 10 tail:*)",
+      "Bash(tree:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(npm run build:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nBuild service archive portfolio with Next.js\n\n- Implement monochrome flat design with Pretendard font\n- Add profile section with GitHub and email links\n- Create service list with auto-fetched commit dates from GitHub API\n- Add service preview with desktop viewport in frame \\(click disabled\\)\n- Integrate 4 services: CSV Splitter, Mail Maker, Number Integration, Detail Page Builder\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+    ]
+  }
+}
