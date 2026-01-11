@@ -3,7 +3,19 @@ import { NextRequest, NextResponse } from 'next/server'
 // 토스페이먼츠 API 엔드포인트
 const TOSS_PAYMENTS_SECRET_KEY = process.env.TOSS_PAYMENTS_SECRET_KEY || ''
 const TOSS_PAYMENTS_URL = 'https://api.tosspayments.com/v1/payments/confirm'
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+
+// BASE_URL 자동 감지 (Vercel에서는 VERCEL_URL 사용, 없으면 NEXT_PUBLIC_BASE_URL 또는 localhost)
+const getBaseUrl = () => {
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`
+  }
+  if (process.env.NEXT_PUBLIC_BASE_URL) {
+    return process.env.NEXT_PUBLIC_BASE_URL
+  }
+  return 'http://localhost:3000'
+}
+
+const BASE_URL = getBaseUrl()
 
 // 임시 데이터 저장소 (실제로는 데이터베이스 사용 권장)
 // 이 예제에서는 메모리 저장소 사용

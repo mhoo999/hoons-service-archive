@@ -78,7 +78,14 @@ export default function Home() {
   useEffect(() => {
     // 클라이언트에서만 높이 계산
     const updateHeight = () => {
-      setFirstSectionHeight(window.innerHeight)
+      const height = window.innerHeight
+      setFirstSectionHeight(height)
+      
+      // 초기 로드 시 해시가 있으면 즉시 스크롤 (애니메이션 없이)
+      if (window.location.hash === '#coffee') {
+        window.scrollTo(0, height)
+        setScrollY(height)
+      }
     }
     
     updateHeight()
@@ -96,7 +103,7 @@ export default function Home() {
     }
   }, [])
 
-  // URL 해시로 섹션 이동 처리 (높이가 계산된 후에만 실행)
+  // URL 해시로 섹션 이동 처리 (해시 변경 시에만 실행, 초기 로드는 위에서 처리)
   useEffect(() => {
     if (firstSectionHeight === 1000) return // 초기값이면 아직 높이가 계산되지 않음
 
@@ -110,13 +117,13 @@ export default function Home() {
     const handleHashChange = () => {
       if (window.location.hash === '#coffee') {
         setTimeout(scrollToCoffeeSection, 100)
+      } else if (window.location.hash === '' || !window.location.hash) {
+        // 해시가 없으면 맨 위로
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        })
       }
-    }
-
-    // 초기 로드 시 해시 확인
-    if (window.location.hash === '#coffee') {
-      // 높이가 계산될 때까지 대기
-      setTimeout(scrollToCoffeeSection, 500)
     }
 
     window.addEventListener('hashchange', handleHashChange)
