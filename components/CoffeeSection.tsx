@@ -41,19 +41,19 @@ export default function CoffeeSection() {
   }
 
   return (
-    <div className="h-screen p-8 md:p-12 lg:p-16 flex items-center" style={{ backgroundColor: 'var(--background)' }}>
-      <div className="max-w-[1600px] mx-auto w-full">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4" style={{ color: 'var(--foreground)' }}>
+    <div className="h-full p-8 md:p-12 lg:p-16 flex items-center overflow-hidden" style={{ backgroundColor: 'var(--background)' }}>
+      <div className="max-w-[1600px] mx-auto w-full h-full flex flex-col">
+        <div className="text-center mb-6 flex-shrink-0">
+          <h1 className="text-4xl lg:text-5xl font-bold mb-2" style={{ color: 'var(--foreground)' }}>
             ☕ Buy Me a Coffee
           </h1>
-          <p className="text-base" style={{ color: 'var(--muted)' }}>
+          <p className="text-sm lg:text-base" style={{ color: 'var(--muted)' }}>
             개발을 응원해주세요! 각 커피는 5,000원입니다.
           </p>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
-          <div className="flex-1 min-w-0 w-full lg:w-auto">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start flex-1 min-h-0 overflow-hidden">
+          <div className="flex-1 min-w-0 w-full lg:w-auto flex flex-col gap-4 overflow-y-auto">
             <CoffeeSelector
               count={coffeeCount}
               onCountChange={setCoffeeCount}
@@ -65,7 +65,7 @@ export default function CoffeeSection() {
             />
           </div>
 
-          <div className="flex-1 min-w-0 w-full lg:w-auto">
+          <div className="flex-1 min-w-0 w-full lg:w-auto overflow-y-auto">
             <SupporterList supporters={supporters} />
           </div>
         </div>

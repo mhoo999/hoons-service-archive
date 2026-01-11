@@ -24,20 +24,20 @@ export default function CoffeeSelector({
 
   return (
     <div
-      className="text-center mb-8 p-10"
+      className="text-center mb-4 p-6"
       style={{
         backgroundColor: 'var(--surface)',
         border: '1px solid var(--border)'
       }}
     >
-      <div className="flex justify-center items-center gap-4 mb-8">
-        <div className="text-6xl">☕</div>
-        <div className="text-3xl font-semibold" style={{ color: 'var(--foreground)' }}>
+      <div className="flex justify-center items-center gap-3 mb-4">
+        <div className="text-4xl lg:text-5xl">☕</div>
+        <div className="text-2xl lg:text-3xl font-semibold" style={{ color: 'var(--foreground)' }}>
           × {count}
         </div>
       </div>
 
-      <div className="flex justify-center items-center gap-8 mb-8">
+      <div className="flex justify-center items-center gap-6 mb-4">
         <button
           className="w-12 h-12 border flex items-center justify-center text-xl font-medium transition-all rounded-lg disabled:opacity-30 disabled:cursor-not-allowed"
           style={{
@@ -65,7 +65,7 @@ export default function CoffeeSelector({
         >
           −
         </button>
-        <span className="text-4xl font-semibold min-w-[60px]" style={{ color: 'var(--foreground)' }}>
+        <span className="text-3xl lg:text-4xl font-semibold min-w-[50px]" style={{ color: 'var(--foreground)' }}>
           {count}
         </span>
         <button
@@ -92,11 +92,11 @@ export default function CoffeeSelector({
         </button>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1">
         <span className="text-xs font-medium" style={{ color: 'var(--muted)' }}>
           총 금액
         </span>
-        <span className="text-3xl font-bold" style={{ color: 'var(--foreground)' }}>
+        <span className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--foreground)' }}>
           {totalPrice.toLocaleString()}원
         </span>
       </div>

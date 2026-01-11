@@ -82,13 +82,13 @@ export default function PaymentForm({
 
   return (
     <div
-      className="p-8"
+      className="p-6"
       style={{
         backgroundColor: 'var(--surface)',
         border: '1px solid var(--border)'
       }}
     >
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           <label htmlFor="donorName" className="text-sm font-semibold" style={{ color: 'var(--foreground)' }}>
             이름 *
@@ -123,7 +123,7 @@ export default function PaymentForm({
           </label>
           <textarea
             id="message"
-            className="px-4 py-3.5 border rounded-lg transition-all focus:outline-none resize-y min-h-[100px]"
+            className="px-4 py-2.5 border rounded-lg transition-all focus:outline-none resize-y min-h-[80px]"
             style={{
               borderColor: 'var(--border)',
               backgroundColor: 'var(--surface)',
@@ -133,7 +133,7 @@ export default function PaymentForm({
             placeholder="댓글을 남겨주세요 (선택사항)"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            rows={4}
+            rows={3}
             onFocus={(e) => {
               e.currentTarget.style.borderColor = 'var(--foreground)'
               e.currentTarget.style.backgroundColor = 'var(--background)'
@@ -146,7 +146,7 @@ export default function PaymentForm({
         </div>
 
         <button
-          className="py-4 px-8 font-semibold transition-all rounded-lg mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="py-3 px-6 font-semibold transition-all rounded-lg mt-1 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
           style={{
             backgroundColor: 'var(--foreground)',
             color: 'var(--surface)',

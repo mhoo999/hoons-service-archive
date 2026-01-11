@@ -95,11 +95,21 @@ export default function Home() {
     }
   }, [])
 
-  // 첫 번째 섹션의 50% 지점에서 전환
-  const transitionPoint = firstSectionHeight * 0.5
+  // 전환 시작 지점 (첫 번째 섹션의 80% 지점)
+  const transitionStart = firstSectionHeight * 0.8
+  // 전환 완료 지점 (첫 번째 섹션의 끝)
+  const transitionEnd = firstSectionHeight
+  // 전환 범위
+  const transitionRange = transitionEnd - transitionStart
 
-  // 현재 페이지 인덱스 계산 (0: 첫 번째, 1: 두 번째) - 즉시 전환
-  const currentPageIndex = scrollY >= transitionPoint ? 1 : 0
+  // 스크롤 위치에 따른 전환 진행도 (0 ~ 1)
+  const transitionProgress = Math.min(
+    Math.max((scrollY - transitionStart) / transitionRange, 0),
+    1
+  )
+
+  // 현재 페이지 인덱스 계산 (0: 첫 번째, 1: 두 번째)
+  const currentPageIndex = transitionProgress > 0.5 ? 1 : 0
 
   // 두 번째 섹션으로 스크롤 이동
   const scrollToSecondSection = () => {
@@ -114,9 +124,10 @@ export default function Home() {
       {/* 첫 번째 섹션: 서비스 아카이브 */}
       <div
         ref={firstSectionRef}
-        className="fixed inset-0 p-8 md:p-12 lg:p-16"
+        className="fixed inset-0 p-8 md:p-12 lg:p-16 transition-all duration-300 ease-out"
         style={{
-          opacity: currentPageIndex === 0 ? 1 : 0,
+          opacity: 1 - transitionProgress,
+          transform: `translateY(${-transitionProgress * 20}px)`,
           pointerEvents: currentPageIndex === 0 ? 'auto' : 'none',
           zIndex: currentPageIndex === 0 ? 10 : 0
         }}
@@ -155,9 +166,10 @@ export default function Home() {
       {/* 두 번째 섹션: 커피 후원 */}
       <div
         ref={secondSectionRef}
-        className="relative"
+        className="relative transition-all duration-300 ease-out"
         style={{
-          opacity: currentPageIndex === 1 ? 1 : 0,
+          opacity: transitionProgress,
+          transform: `translateY(${(1 - transitionProgress) * 20}px)`,
           marginTop: `${firstSectionHeight}px`,
           height: `${firstSectionHeight}px`,
           zIndex: currentPageIndex === 1 ? 10 : 0
@@ -168,7 +180,7 @@ export default function Home() {
 
       {/* 닷 인디케이터 */}
       <div
-        className="fixed bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-row gap-3"
+        className="fixed bottom-20 left-1/2 -translate-x-1/2 z-20 flex flex-row gap-3"
         style={{ zIndex: 20 }}
       >
         <button
