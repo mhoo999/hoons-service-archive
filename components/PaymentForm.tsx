@@ -82,14 +82,14 @@ export default function PaymentForm({
 
   return (
     <div
-      className="p-6"
+      className="p-6 flex-1 flex flex-col"
       style={{
         backgroundColor: 'var(--surface)',
         border: '1px solid var(--border)'
       }}
     >
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-4 flex-1">
+        <div className="flex flex-col gap-2 flex-shrink-0">
           <label htmlFor="donorName" className="text-sm font-semibold" style={{ color: 'var(--foreground)' }}>
             이름 *
           </label>
@@ -117,13 +117,13 @@ export default function PaymentForm({
           />
         </div>
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="message" className="text-sm font-semibold" style={{ color: 'var(--foreground)' }}>
+        <div className="flex flex-col gap-2 flex-1 min-h-0">
+          <label htmlFor="message" className="text-sm font-semibold flex-shrink-0" style={{ color: 'var(--foreground)' }}>
             댓글 (선택)
           </label>
           <textarea
             id="message"
-            className="px-4 py-2.5 border rounded-lg transition-all focus:outline-none resize-y min-h-[80px]"
+            className="px-4 py-2.5 border rounded-lg transition-all focus:outline-none resize-none flex-1"
             style={{
               borderColor: 'var(--border)',
               backgroundColor: 'var(--surface)',
@@ -133,7 +133,6 @@ export default function PaymentForm({
             placeholder="댓글을 남겨주세요 (선택사항)"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            rows={3}
             onFocus={(e) => {
               e.currentTarget.style.borderColor = 'var(--foreground)'
               e.currentTarget.style.backgroundColor = 'var(--background)'
@@ -146,7 +145,7 @@ export default function PaymentForm({
         </div>
 
         <button
-          className="py-3 px-6 font-semibold transition-all rounded-lg mt-1 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+          className="py-3 px-6 font-semibold transition-all rounded-lg mt-auto flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
           style={{
             backgroundColor: 'var(--foreground)',
             color: 'var(--surface)',

@@ -24,7 +24,7 @@ export default function CoffeeSelector({
 
   return (
     <div
-      className="text-center mb-4 p-6"
+      className="text-center p-6 flex-shrink-0"
       style={{
         backgroundColor: 'var(--surface)',
         border: '1px solid var(--border)'

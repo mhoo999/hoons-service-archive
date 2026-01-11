@@ -17,31 +17,50 @@ interface Supporter {
 export default function CoffeeSection() {
   const [coffeeCount, setCoffeeCount] = useState(1)
   const [supporters, setSupporters] = useState<Supporter[]>([])
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const pageSize = 5 // 한 번에 표시할 후원자 수
 
   useEffect(() => {
     // 후원자 목록 가져오기
-    fetchSupporters()
+    fetchSupporters(1, true)
   }, [])
 
-  const fetchSupporters = async () => {
+  const fetchSupporters = async (pageNum: number, reset: boolean = false) => {
+    setIsLoading(true)
     try {
-      const response = await fetch('/api/supporters')
+      const response = await fetch(`/api/supporters?page=${pageNum}&limit=${pageSize}`)
       if (response.ok) {
         const data = await response.json()
-        setSupporters(data)
+        if (reset) {
+          setSupporters(data.supporters || [])
+        } else {
+          setSupporters(prev => [...prev, ...(data.supporters || [])])
+        }
+        setHasMore(data.hasMore || false)
+        setPage(pageNum)
       }
     } catch (error) {
       console.error('후원자 목록 가져오기 실패:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleLoadMore = async () => {
+    if (!isLoading && hasMore) {
+      await fetchSupporters(page + 1, false)
     }
   }
 
   const handlePaymentSuccess = () => {
     // 결제 성공 후 후원자 목록 새로고침
-    fetchSupporters()
+    fetchSupporters(1, true)
   }
 
   return (
-    <div className="h-full p-8 md:p-12 lg:p-16 flex items-center overflow-hidden" style={{ backgroundColor: 'var(--background)' }}>
+    <div className="h-full pt-8 md:pt-12 lg:pt-16 px-8 md:px-12 lg:px-16 pb-24 md:pb-28 lg:pb-32 flex items-center overflow-hidden" style={{ backgroundColor: 'var(--background)' }}>
       <div className="max-w-[1600px] mx-auto w-full h-full flex flex-col">
         <div className="text-center mb-6 flex-shrink-0">
           <h1 className="text-4xl lg:text-5xl font-bold mb-2" style={{ color: 'var(--foreground)' }}>
@@ -52,8 +71,8 @@ export default function CoffeeSection() {
           </p>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start flex-1 min-h-0 overflow-hidden">
-          <div className="flex-1 min-w-0 w-full lg:w-auto flex flex-col gap-4 overflow-y-auto">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-stretch flex-1 min-h-0">
+          <div className="flex-1 min-w-0 w-full lg:w-auto flex flex-col gap-4">
             <CoffeeSelector
               count={coffeeCount}
               onCountChange={setCoffeeCount}
@@ -65,8 +84,13 @@ export default function CoffeeSection() {
             />
           </div>
 
-          <div className="flex-1 min-w-0 w-full lg:w-auto overflow-y-auto">
-            <SupporterList supporters={supporters} />
+          <div className="flex-1 min-w-0 w-full lg:w-auto flex flex-col">
+            <SupporterList 
+              supporters={supporters} 
+              onLoadMore={handleLoadMore}
+              hasMore={hasMore}
+              isLoading={isLoading}
+            />
           </div>
         </div>
       </div>

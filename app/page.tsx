@@ -89,11 +89,42 @@ export default function Home() {
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
+    
     return () => {
       window.removeEventListener('scroll', handleScroll)
       window.removeEventListener('resize', updateHeight)
     }
   }, [])
+
+  // URL 해시로 섹션 이동 처리 (높이가 계산된 후에만 실행)
+  useEffect(() => {
+    if (firstSectionHeight === 1000) return // 초기값이면 아직 높이가 계산되지 않음
+
+    const scrollToCoffeeSection = () => {
+      window.scrollTo({
+        top: firstSectionHeight,
+        behavior: 'smooth'
+      })
+    }
+
+    const handleHashChange = () => {
+      if (window.location.hash === '#coffee') {
+        setTimeout(scrollToCoffeeSection, 100)
+      }
+    }
+
+    // 초기 로드 시 해시 확인
+    if (window.location.hash === '#coffee') {
+      // 높이가 계산될 때까지 대기
+      setTimeout(scrollToCoffeeSection, 500)
+    }
+
+    window.addEventListener('hashchange', handleHashChange)
+    
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange)
+    }
+  }, [firstSectionHeight])
 
   // 전환 시작 지점 (첫 번째 섹션의 80% 지점)
   const transitionStart = firstSectionHeight * 0.8
@@ -124,7 +155,7 @@ export default function Home() {
       {/* 첫 번째 섹션: 서비스 아카이브 */}
       <div
         ref={firstSectionRef}
-        className="fixed inset-0 p-8 md:p-12 lg:p-16 transition-all duration-300 ease-out"
+        className="fixed inset-0 pt-8 md:pt-12 lg:pt-16 px-8 md:px-12 lg:px-16 pb-32 md:pb-36 lg:pb-40 transition-all duration-300 ease-out"
         style={{
           opacity: 1 - transitionProgress,
           transform: `translateY(${-transitionProgress * 20}px)`,
@@ -132,7 +163,7 @@ export default function Home() {
           zIndex: currentPageIndex === 0 ? 10 : 0
         }}
       >
-        <div className="max-w-[1600px] mx-auto h-[calc(100vh-8rem)] flex gap-8 lg:gap-12">
+        <div className="max-w-[1600px] mx-auto h-[calc(100vh-12rem)] flex gap-8 lg:gap-12">
           {/* 왼쪽: 프로필 섹션 */}
           <div className="w-80 lg:w-96 flex-shrink-0">
             <Profile
