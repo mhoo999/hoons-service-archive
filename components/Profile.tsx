@@ -5,6 +5,7 @@ interface ProfileProps {
   github: string
   email?: string
   coffeeUrl?: string
+  onCoffeeClick?: () => void
 }
 
 export default function Profile({
@@ -13,7 +14,8 @@ export default function Profile({
   greeting,
   github,
   email,
-  coffeeUrl = 'https://need-coffee.vercel.app/'
+  coffeeUrl = 'https://need-coffee.vercel.app/',
+  onCoffeeClick
 }: ProfileProps) {
   const githubUrl = github.startsWith('http') ? github : `https://github.com/${github}`
   const githubUsername = github.replace(/^https?:\/\/github\.com\//, '')
@@ -83,18 +85,31 @@ export default function Profile({
       </div>
 
       <div className="mt-auto">
-        <a
-          href={coffeeUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block py-3 px-6 text-center text-sm font-medium transition-opacity hover:opacity-80"
-          style={{
-            backgroundColor: 'var(--foreground)',
-            color: 'var(--surface)'
-          }}
-        >
-          개발자 커피 한잔 사주기
-        </a>
+        {onCoffeeClick ? (
+          <button
+            onClick={onCoffeeClick}
+            className="w-full py-3 px-6 text-center text-sm font-medium transition-opacity hover:opacity-80"
+            style={{
+              backgroundColor: 'var(--foreground)',
+              color: 'var(--surface)'
+            }}
+          >
+            개발자 커피 한잔 사주기
+          </button>
+        ) : (
+          <a
+            href={coffeeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block py-3 px-6 text-center text-sm font-medium transition-opacity hover:opacity-80"
+            style={{
+              backgroundColor: 'var(--foreground)',
+              color: 'var(--surface)'
+            }}
+          >
+            개발자 커피 한잔 사주기
+          </a>
+        )}
       </div>
     </div>
   )

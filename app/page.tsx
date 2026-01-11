@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Profile from '@/components/Profile'
 import ServiceList from '@/components/ServiceList'
 import ServicePreview from '@/components/ServicePreview'
+import CoffeeSection from '@/components/CoffeeSection'
 import { Service } from '@/types/service'
 import { getLatestCommitDate } from '@/utils/github'
 
@@ -45,6 +46,11 @@ const initialServices: Service[] = [
 export default function Home() {
   const [services, setServices] = useState<Service[]>(initialServices)
   const [selectedService, setSelectedService] = useState<Service | null>(null)
+  const [scrollY, setScrollY] = useState(0)
+  const [firstSectionHeight, setFirstSectionHeight] = useState(1000) // 초기값은 서버와 클라이언트 동일하게
+  const containerRef = useRef<HTMLDivElement>(null)
+  const firstSectionRef = useRef<HTMLDivElement>(null)
+  const secondSectionRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const fetchCommitDates = async () => {
@@ -69,35 +75,120 @@ export default function Home() {
     fetchCommitDates()
   }, [])
 
-  return (
-    <div className="min-h-screen p-8 md:p-12 lg:p-16" style={{ backgroundColor: 'var(--background)' }}>
-      <div className="max-w-[1600px] mx-auto h-[calc(100vh-8rem)] flex gap-8 lg:gap-12">
-        {/* 왼쪽: 프로필 섹션 */}
-        <div className="w-80 lg:w-96 flex-shrink-0">
-          <Profile
-            nickname="thinghoon"
-            greeting="여러모로 도움이 되는 서비스를 개발하고 있습니다. 좋은 아이디어나 필요한 서비스가 있다면 메일주세요!"
-            github="https://github.com/mhoo999"
-            email="mhoo999@naver.com"
-          />
-        </div>
+  useEffect(() => {
+    // 클라이언트에서만 높이 계산
+    const updateHeight = () => {
+      setFirstSectionHeight(window.innerHeight)
+    }
+    
+    updateHeight()
+    window.addEventListener('resize', updateHeight)
 
-        {/* 오른쪽: 서비스 리스트 컨테이너 */}
-        <div className="flex-1 flex gap-8 lg:gap-12 min-w-0">
-          {/* 서비스 리스트 */}
+    const handleScroll = () => {
+      setScrollY(window.scrollY)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', updateHeight)
+    }
+  }, [])
+
+  // 첫 번째 섹션의 50% 지점에서 전환
+  const transitionPoint = firstSectionHeight * 0.5
+
+  // 현재 페이지 인덱스 계산 (0: 첫 번째, 1: 두 번째) - 즉시 전환
+  const currentPageIndex = scrollY >= transitionPoint ? 1 : 0
+
+  // 두 번째 섹션으로 스크롤 이동
+  const scrollToSecondSection = () => {
+    window.scrollTo({
+      top: firstSectionHeight,
+      behavior: 'smooth'
+    })
+  }
+
+  return (
+    <div ref={containerRef} style={{ backgroundColor: 'var(--background)' }}>
+      {/* 첫 번째 섹션: 서비스 아카이브 */}
+      <div
+        ref={firstSectionRef}
+        className="fixed inset-0 p-8 md:p-12 lg:p-16"
+        style={{
+          opacity: currentPageIndex === 0 ? 1 : 0,
+          pointerEvents: currentPageIndex === 0 ? 'auto' : 'none',
+          zIndex: currentPageIndex === 0 ? 10 : 0
+        }}
+      >
+        <div className="max-w-[1600px] mx-auto h-[calc(100vh-8rem)] flex gap-8 lg:gap-12">
+          {/* 왼쪽: 프로필 섹션 */}
           <div className="w-80 lg:w-96 flex-shrink-0">
-            <ServiceList
-              services={services}
-              selectedService={selectedService}
-              onSelectService={setSelectedService}
+            <Profile
+              nickname="thinghoon"
+              greeting="여러모로 도움이 되는 서비스를 개발하고 있습니다. 좋은 아이디어나 필요한 서비스가 있다면 메일주세요!"
+              github="https://github.com/mhoo999"
+              email="mhoo999@naver.com"
+              onCoffeeClick={scrollToSecondSection}
             />
           </div>
 
-          {/* 서비스 미리보기 */}
-          <div className="flex-1 min-w-0">
-            <ServicePreview service={selectedService} />
+          {/* 오른쪽: 서비스 리스트 컨테이너 */}
+          <div className="flex-1 flex gap-8 lg:gap-12 min-w-0">
+            {/* 서비스 리스트 */}
+            <div className="w-80 lg:w-96 flex-shrink-0">
+              <ServiceList
+                services={services}
+                selectedService={selectedService}
+                onSelectService={setSelectedService}
+              />
+            </div>
+
+            {/* 서비스 미리보기 */}
+            <div className="flex-1 min-w-0">
+              <ServicePreview service={selectedService} />
+            </div>
           </div>
         </div>
+      </div>
+
+      {/* 두 번째 섹션: 커피 후원 */}
+      <div
+        ref={secondSectionRef}
+        className="relative"
+        style={{
+          opacity: currentPageIndex === 1 ? 1 : 0,
+          marginTop: `${firstSectionHeight}px`,
+          height: `${firstSectionHeight}px`,
+          zIndex: currentPageIndex === 1 ? 10 : 0
+        }}
+      >
+        <CoffeeSection />
+      </div>
+
+      {/* 닷 인디케이터 */}
+      <div
+        className="fixed bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-row gap-3"
+        style={{ zIndex: 20 }}
+      >
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="w-3 h-3 rounded-full transition-all"
+          style={{
+            backgroundColor: currentPageIndex === 0 ? 'var(--foreground)' : 'var(--muted)',
+            opacity: currentPageIndex === 0 ? 1 : 0.4
+          }}
+          aria-label="첫 번째 페이지"
+        />
+        <button
+          onClick={() => window.scrollTo({ top: firstSectionHeight, behavior: 'smooth' })}
+          className="w-3 h-3 rounded-full transition-all"
+          style={{
+            backgroundColor: currentPageIndex === 1 ? 'var(--foreground)' : 'var(--muted)',
+            opacity: currentPageIndex === 1 ? 1 : 0.4
+          }}
+          aria-label="두 번째 페이지"
+        />
       </div>
     </div>
   )
