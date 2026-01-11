@@ -81,6 +81,7 @@ export default function PaymentForm({
           <input
             id="donorName"
             type="text"
+            autoComplete="name"
             className="px-4 py-3.5 border rounded-lg transition-all focus:outline-none"
             style={{
               borderColor: 'var(--border)',
@@ -95,8 +96,14 @@ export default function PaymentForm({
               e.currentTarget.style.backgroundColor = 'var(--background)'
             }}
             onBlur={(e) => {
-              e.currentTarget.style.borderColor = 'var(--border)'
-              e.currentTarget.style.backgroundColor = 'var(--surface)'
+              // 자동완성 목록 클릭을 위한 지연 처리
+              setTimeout(() => {
+                // blur 후에도 focus가 유지되면 (자동완성 클릭) 스타일 유지
+                if (document.activeElement !== e.currentTarget) {
+                  e.currentTarget.style.borderColor = 'var(--border)'
+                  e.currentTarget.style.backgroundColor = 'var(--surface)'
+                }
+              }, 200)
             }}
             required
           />
