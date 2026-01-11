@@ -26,7 +26,7 @@ export default function PaymentForm({
     }
 
     if (!clientKey) {
-      alert('결제 설정이 필요합니다.')
+      alert('개발중입니다.')
       return
     }
 
@@ -63,21 +63,6 @@ export default function PaymentForm({
       alert(`결제 처리 중 오류가 발생했습니다: ${error.message}`)
       setLoading(false)
     }
-  }
-
-  if (!clientKey) {
-    return (
-      <div
-        className="p-4 text-center font-medium"
-        style={{
-          backgroundColor: 'var(--surface)',
-          border: '1px solid var(--border)',
-          color: 'var(--foreground)'
-        }}
-      >
-        결제 설정이 필요합니다. NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY를 설정해주세요.
-      </div>
-    )
   }
 
   return (
