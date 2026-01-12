@@ -80,9 +80,9 @@ export default function ServiceList({
                 </p>
               </button>
               
-              {/* 아코디언 콘텐츠 */}
+              {/* 아코디언 콘텐츠 (모바일만 표시) */}
               <div
-                className="overflow-hidden transition-all duration-300 ease-in-out"
+                className="md:hidden overflow-hidden transition-all duration-300 ease-in-out"
                 style={{
                   maxHeight: isSelected ? '500px' : '0',
                   opacity: isSelected ? 1 : 0
@@ -97,7 +97,7 @@ export default function ServiceList({
                         opacity: isSelected ? 0.9 : 0.8
                       }}
                     >
-                      {service.description} 해주는 서비스
+                      {service.description}
                     </p>
                     <div className="flex flex-col gap-2">
                       <a

@@ -12,7 +12,7 @@ const initialServices: Service[] = [
   {
     id: '1',
     name: 'CSV 스플리터',
-    description: 'CSV 파일의 원하는 컬럼을 선택하여 Excel 파일로 변환한 후 ZIP으로 일괄 다운로드',
+    description: 'CSV 파일의 원하는 컬럼을 선택하여 Excel 파일로 변환한 후 ZIP으로 일괄 다운로드 해주는 서비스',
     url: 'https://csv-splitter-nine.vercel.app/',
     updatedAt: '로딩 중...',
     repository: 'https://github.com/mhoo999/csv-splitter'
@@ -20,7 +20,7 @@ const initialServices: Service[] = [
   {
     id: '2',
     name: '메일 메이커',
-    description: '드래그 앤 드롭으로 HTML 이메일 템플릿을 쉽게 제작하는 비주얼 빌더',
+    description: '드래그 앤 드롭으로 HTML 이메일 템플릿을 쉽게 제작할 수 있는 비주얼 빌더 서비스',
     url: 'https://mail-maker.vercel.app/',
     updatedAt: '로딩 중...',
     repository: 'https://github.com/mhoo999/mail-maker'
@@ -36,7 +36,7 @@ const initialServices: Service[] = [
   {
     id: '4',
     name: '상세 페이지 에디터',
-    description: '드래그 앤 드롭으로 상세페이지를 시각적으로 제작하고 HTML로 내보내는 빌더',
+    description: '드래그 앤 드롭으로 상세페이지를 시각적으로 제작하고 HTML로 내보낼 수 있는 빌더 서비스',
     url: 'https://detail-page-builder.vercel.app/',
     updatedAt: '로딩 중...',
     repository: 'https://github.com/mhoo999/detail-page-builder'
