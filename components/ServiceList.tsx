@@ -26,7 +26,7 @@ export default function ServiceList({
 
   return (
     <div
-      className="h-full overflow-y-auto p-8"
+      className="md:h-full md:overflow-y-auto p-8"
       style={{
         backgroundColor: 'var(--surface)',
         border: '1px solid var(--border)'

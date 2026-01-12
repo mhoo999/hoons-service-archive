@@ -168,17 +168,55 @@ export default function Home() {
     })
   }
 
+  // 모바일 뷰 감지 (md 브레이크포인트 미만)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768) // md breakpoint
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
   return (
     <div ref={containerRef} style={{ backgroundColor: 'var(--background)' }}>
-      {/* 첫 번째 섹션: 서비스 아카이브 */}
+      {/* 모바일 뷰: 세로형 그리드 */}
+      <div className="md:hidden pt-8 px-8 pb-8">
+        <div className="max-w-[1600px] mx-auto flex flex-col gap-8">
+          {/* 프로필 섹션 */}
+          <div>
+            <Profile
+              nickname="thinghoon"
+              greeting="여러모로 도움이 되는 서비스를 개발하고 있습니다. 좋은 아이디어나 필요한 서비스가 있다면 메일주세요!"
+              github="https://github.com/mhoo999"
+              email="mhoo999@naver.com"
+              onCoffeeClick={scrollToSecondSection}
+            />
+          </div>
+
+          {/* 서비스 리스트 */}
+          <div>
+            <ServiceList
+              services={services}
+              selectedService={selectedService}
+              onSelectService={setSelectedService}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* 데스크톱 뷰: 첫 번째 섹션 (서비스 아카이브) */}
       <div
         ref={firstSectionRef}
-        className="fixed inset-0 pt-8 md:pt-12 lg:pt-16 px-8 md:px-12 lg:px-16 pb-32 md:pb-36 lg:pb-40 transition-all duration-300 ease-out"
+        className="hidden md:block fixed inset-0 pt-8 md:pt-12 lg:pt-16 px-8 md:px-12 lg:px-16 pb-32 md:pb-36 lg:pb-40 transition-all duration-300 ease-out"
         style={{
-          opacity: 1 - transitionProgress,
-          transform: `translateY(${-transitionProgress * 20}px)`,
-          pointerEvents: currentPageIndex === 0 ? 'auto' : 'none',
-          zIndex: currentPageIndex === 0 ? 10 : 0
+          opacity: isMobile ? 1 : 1 - transitionProgress,
+          transform: isMobile ? 'none' : `translateY(${-transitionProgress * 20}px)`,
+          pointerEvents: isMobile ? 'auto' : (currentPageIndex === 0 ? 'auto' : 'none'),
+          zIndex: isMobile ? 0 : (currentPageIndex === 0 ? 10 : 0)
         }}
       >
         <div className="max-w-[1600px] mx-auto h-[calc(100vh-12rem)] flex gap-8 lg:gap-12">
@@ -205,31 +243,36 @@ export default function Home() {
             </div>
 
             {/* 서비스 미리보기 */}
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 hidden lg:block">
               <ServicePreview service={selectedService} />
             </div>
           </div>
         </div>
       </div>
 
-      {/* 두 번째 섹션: 커피 후원 */}
+      {/* 모바일 뷰: 커피 후원 섹션 */}
+      <div className="md:hidden">
+        <CoffeeSection />
+      </div>
+
+      {/* 데스크톱 뷰: 두 번째 섹션 (커피 후원) */}
       <div
         ref={secondSectionRef}
-        className="relative transition-all duration-300 ease-out"
+        className="hidden md:block relative transition-all duration-300 ease-out"
         style={{
-          opacity: transitionProgress,
-          transform: `translateY(${(1 - transitionProgress) * 20}px)`,
-          marginTop: `${firstSectionHeight}px`,
-          height: `${firstSectionHeight}px`,
-          zIndex: currentPageIndex === 1 ? 10 : 0
+          opacity: isMobile ? 1 : transitionProgress,
+          transform: isMobile ? 'none' : `translateY(${(1 - transitionProgress) * 20}px)`,
+          marginTop: isMobile ? 0 : `${firstSectionHeight}px`,
+          height: isMobile ? 'auto' : `${firstSectionHeight}px`,
+          zIndex: isMobile ? 0 : (currentPageIndex === 1 ? 10 : 0)
         }}
       >
         <CoffeeSection />
       </div>
 
-      {/* 닷 인디케이터 */}
+      {/* 닷 인디케이터 (데스크톱만 표시) */}
       <div
-        className="fixed bottom-20 left-1/2 -translate-x-1/2 z-20 flex flex-row gap-3"
+        className="hidden md:flex fixed bottom-20 left-1/2 -translate-x-1/2 z-20 flex-row gap-3"
         style={{ zIndex: 20 }}
       >
         <button
