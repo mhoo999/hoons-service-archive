@@ -27,8 +27,8 @@ const initialServices: Service[] = [
   },
   {
     id: '3',
-    name: '전화번호 형식 통일',
-    description: '엑셀 파일의 전화번호를 통일된 형식(하이픈 포함/없음)으로 자동 변환',
+    name: '전화번호 형식 변환기',
+    description: '엑셀 파일의 전화번호를 통일된 형식(하이픈 포함/없음)으로 자동 변환해주는 서비스',
     url: 'https://number-integration.vercel.app/',
     updatedAt: '로딩 중...',
     repository: 'https://github.com/mhoo999/number-integration'
