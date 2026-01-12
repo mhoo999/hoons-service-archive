@@ -162,10 +162,20 @@ export default function Home() {
 
   // 두 번째 섹션으로 스크롤 이동
   const scrollToSecondSection = () => {
-    window.scrollTo({
-      top: firstSectionHeight,
-      behavior: 'smooth'
-    })
+    const isMobileView = window.innerWidth < 768 // md breakpoint
+    if (isMobileView) {
+      // 모바일: CoffeeSection 요소로 스크롤
+      const coffeeSection = document.getElementById('coffee-section')
+      if (coffeeSection) {
+        coffeeSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    } else {
+      // 데스크톱: firstSectionHeight 위치로 스크롤
+      window.scrollTo({
+        top: firstSectionHeight,
+        behavior: 'smooth'
+      })
+    }
   }
 
   // 모바일 뷰 감지 (md 브레이크포인트 미만)
@@ -251,7 +261,7 @@ export default function Home() {
       </div>
 
       {/* 모바일 뷰: 커피 후원 섹션 */}
-      <div className="md:hidden">
+      <div id="coffee-section" className="md:hidden">
         <CoffeeSection />
       </div>
 

@@ -97,7 +97,7 @@ export default function ServiceList({
                         opacity: isSelected ? 0.9 : 0.8
                       }}
                     >
-                      {service.description}
+                      {service.description} 해주는 서비스
                     </p>
                     <div className="flex flex-col gap-2">
                       <a
@@ -114,22 +114,6 @@ export default function ServiceList({
                       >
                         {service.url}
                       </a>
-                      {service.repository && (
-                        <a
-                          href={service.repository}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs hover:opacity-80 transition-opacity break-all"
-                          style={{
-                            color: isSelected ? 'var(--surface)' : 'var(--muted)',
-                            textDecoration: 'underline',
-                            opacity: isSelected ? 0.7 : 0.6
-                          }}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          {service.repository}
-                        </a>
-                      )}
                     </div>
                   </div>
                 </div>
