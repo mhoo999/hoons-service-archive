@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "Hoon's Services",
   description: 'Personal service collection showcase',
   icons: {
-    icon: '/profile.jpg',
+    icon: '/icon.svg',
   },
 }
 
