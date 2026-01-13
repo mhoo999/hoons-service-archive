@@ -1,12 +1,10 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Profile from '@/components/Profile'
 import ServiceList from '@/components/ServiceList'
 import ServicePreview from '@/components/ServicePreview'
-import CoffeeSection from '@/components/CoffeeSection'
 import { Service } from '@/types/service'
-import { getLatestCommitDate } from '@/utils/github'
 
 const initialServices: Service[] = [
   {
@@ -46,11 +44,6 @@ const initialServices: Service[] = [
 export default function Home() {
   const [services, setServices] = useState<Service[]>(initialServices)
   const [selectedService, setSelectedService] = useState<Service | null>(null)
-  const [scrollY, setScrollY] = useState(0)
-  const [firstSectionHeight, setFirstSectionHeight] = useState(1000) // 초기값은 서버와 클라이언트 동일하게
-  const containerRef = useRef<HTMLDivElement>(null)
-  const firstSectionRef = useRef<HTMLDivElement>(null)
-  const secondSectionRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const fetchCommitDates = async () => {
@@ -86,113 +79,9 @@ export default function Home() {
     fetchCommitDates()
   }, [])
 
-  useEffect(() => {
-    // 클라이언트에서만 높이 계산
-    const updateHeight = () => {
-      const height = window.innerHeight
-      setFirstSectionHeight(height)
-      
-      // 초기 로드 시 해시가 있으면 즉시 스크롤 (애니메이션 없이)
-      if (window.location.hash === '#coffee') {
-        window.scrollTo(0, height)
-        setScrollY(height)
-      }
-    }
-    
-    updateHeight()
-    window.addEventListener('resize', updateHeight)
-
-    const handleScroll = () => {
-      setScrollY(window.scrollY)
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('resize', updateHeight)
-    }
-  }, [])
-
-  // URL 해시로 섹션 이동 처리 (해시 변경 시에만 실행, 초기 로드는 위에서 처리)
-  useEffect(() => {
-    if (firstSectionHeight === 1000) return // 초기값이면 아직 높이가 계산되지 않음
-
-    const scrollToCoffeeSection = () => {
-      window.scrollTo({
-        top: firstSectionHeight,
-        behavior: 'smooth'
-      })
-    }
-
-    const handleHashChange = () => {
-      if (window.location.hash === '#coffee') {
-        setTimeout(scrollToCoffeeSection, 100)
-      } else if (window.location.hash === '' || !window.location.hash) {
-        // 해시가 없으면 맨 위로
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth'
-        })
-      }
-    }
-
-    window.addEventListener('hashchange', handleHashChange)
-    
-    return () => {
-      window.removeEventListener('hashchange', handleHashChange)
-    }
-  }, [firstSectionHeight])
-
-  // 전환 시작 지점 (첫 번째 섹션의 80% 지점)
-  const transitionStart = firstSectionHeight * 0.8
-  // 전환 완료 지점 (첫 번째 섹션의 끝)
-  const transitionEnd = firstSectionHeight
-  // 전환 범위
-  const transitionRange = transitionEnd - transitionStart
-
-  // 스크롤 위치에 따른 전환 진행도 (0 ~ 1)
-  const transitionProgress = Math.min(
-    Math.max((scrollY - transitionStart) / transitionRange, 0),
-    1
-  )
-
-  // 현재 페이지 인덱스 계산 (0: 첫 번째, 1: 두 번째)
-  const currentPageIndex = transitionProgress > 0.5 ? 1 : 0
-
-  // 두 번째 섹션으로 스크롤 이동
-  const scrollToSecondSection = () => {
-    const isMobileView = window.innerWidth < 768 // md breakpoint
-    if (isMobileView) {
-      // 모바일: CoffeeSection 요소로 스크롤
-      const coffeeSection = document.getElementById('coffee-section')
-      if (coffeeSection) {
-        coffeeSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }
-    } else {
-      // 데스크톱: firstSectionHeight 위치로 스크롤
-      window.scrollTo({
-        top: firstSectionHeight,
-        behavior: 'smooth'
-      })
-    }
-  }
-
-  // 모바일 뷰 감지 (md 브레이크포인트 미만)
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768) // md breakpoint
-    }
-    
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
 
   return (
-    <div ref={containerRef} style={{ backgroundColor: 'var(--background)' }}>
+    <div style={{ backgroundColor: 'var(--background)' }}>
       {/* 모바일 뷰: 세로형 그리드 */}
       <div className="md:hidden pt-8 px-8 pb-8">
         <div className="max-w-[1600px] mx-auto flex flex-col gap-8">
@@ -203,7 +92,7 @@ export default function Home() {
               greeting="여러모로 도움이 되는 서비스를 개발하고 있습니다. 좋은 아이디어나 필요한 서비스가 있다면 메일주세요!"
               github="https://github.com/mhoo999"
               email="mhoo999@naver.com"
-              onCoffeeClick={scrollToSecondSection}
+              coffeeUrl="https://buymeacoffee.com/hoonsdev"
             />
           </div>
 
@@ -218,18 +107,9 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 데스크톱 뷰: 첫 번째 섹션 (서비스 아카이브) */}
-      <div
-        ref={firstSectionRef}
-        className="hidden md:block fixed inset-0 pt-8 md:pt-12 lg:pt-16 px-8 md:px-12 lg:px-16 pb-32 md:pb-36 lg:pb-40 transition-all duration-300 ease-out"
-        style={{
-          opacity: isMobile ? 1 : 1 - transitionProgress,
-          transform: isMobile ? 'none' : `translateY(${-transitionProgress * 20}px)`,
-          pointerEvents: isMobile ? 'auto' : (currentPageIndex === 0 ? 'auto' : 'none'),
-          zIndex: isMobile ? 0 : (currentPageIndex === 0 ? 10 : 0)
-        }}
-      >
-        <div className="max-w-[1600px] mx-auto h-[calc(100vh-12rem)] flex gap-8 lg:gap-12">
+      {/* 데스크톱 뷰: 서비스 아카이브 */}
+      <div className="hidden md:block pt-8 md:pt-12 lg:pt-16 px-8 md:px-12 lg:px-16 pb-8">
+        <div className="max-w-[1600px] mx-auto h-[calc(100vh-8rem)] flex gap-8 lg:gap-12">
           {/* 왼쪽: 프로필 섹션 */}
           <div className="w-80 lg:w-96 flex-shrink-0">
             <Profile
@@ -237,7 +117,7 @@ export default function Home() {
               greeting="여러모로 도움이 되는 서비스를 개발하고 있습니다. 좋은 아이디어나 필요한 서비스가 있다면 메일주세요!"
               github="https://github.com/mhoo999"
               email="mhoo999@naver.com"
-              onCoffeeClick={scrollToSecondSection}
+              coffeeUrl="https://buymeacoffee.com/hoonsdev"
             />
           </div>
 
@@ -258,51 +138,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* 모바일 뷰: 커피 후원 섹션 */}
-      <div id="coffee-section" className="md:hidden">
-        <CoffeeSection />
-      </div>
-
-      {/* 데스크톱 뷰: 두 번째 섹션 (커피 후원) */}
-      <div
-        ref={secondSectionRef}
-        className="hidden md:block relative transition-all duration-300 ease-out"
-        style={{
-          opacity: isMobile ? 1 : transitionProgress,
-          transform: isMobile ? 'none' : `translateY(${(1 - transitionProgress) * 20}px)`,
-          marginTop: isMobile ? 0 : `${firstSectionHeight}px`,
-          height: isMobile ? 'auto' : `${firstSectionHeight}px`,
-          zIndex: isMobile ? 0 : (currentPageIndex === 1 ? 10 : 0)
-        }}
-      >
-        <CoffeeSection />
-      </div>
-
-      {/* 닷 인디케이터 (데스크톱만 표시) */}
-      <div
-        className="hidden md:flex fixed bottom-20 left-1/2 -translate-x-1/2 z-20 flex-row gap-3"
-        style={{ zIndex: 20 }}
-      >
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="w-3 h-3 rounded-full transition-all"
-          style={{
-            backgroundColor: currentPageIndex === 0 ? 'var(--foreground)' : 'var(--muted)',
-            opacity: currentPageIndex === 0 ? 1 : 0.4
-          }}
-          aria-label="첫 번째 페이지"
-        />
-        <button
-          onClick={() => window.scrollTo({ top: firstSectionHeight, behavior: 'smooth' })}
-          className="w-3 h-3 rounded-full transition-all"
-          style={{
-            backgroundColor: currentPageIndex === 1 ? 'var(--foreground)' : 'var(--muted)',
-            opacity: currentPageIndex === 1 ? 1 : 0.4
-          }}
-          aria-label="두 번째 페이지"
-        />
       </div>
     </div>
   )
