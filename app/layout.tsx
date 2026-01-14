@@ -5,9 +5,6 @@ import './globals.css'
 export const metadata: Metadata = {
   title: "Hoon's Services",
   description: 'Personal service collection showcase',
-  icons: {
-    icon: '/icon.svg',
-  },
 }
 
 export default function RootLayout({
