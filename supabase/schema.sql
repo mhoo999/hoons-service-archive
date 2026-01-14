@@ -1,6 +1,7 @@
 -- 후원자 테이블 생성
 CREATE TABLE IF NOT EXISTS supporters (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  mul_no TEXT UNIQUE, -- 페이앱 결제 번호 (중복 방지용)
   name TEXT NOT NULL,
   amount INTEGER NOT NULL,
   coffee_count INTEGER NOT NULL,
@@ -10,6 +11,9 @@ CREATE TABLE IF NOT EXISTS supporters (
 
 -- 인덱스 생성 (최신순 조회 최적화)
 CREATE INDEX IF NOT EXISTS idx_supporters_created_at ON supporters(created_at DESC);
+
+-- mul_no 인덱스 생성 (중복 체크 최적화)
+CREATE INDEX IF NOT EXISTS idx_supporters_mul_no ON supporters(mul_no);
 
 -- RLS (Row Level Security) 정책 설정
 ALTER TABLE supporters ENABLE ROW LEVEL SECURITY;

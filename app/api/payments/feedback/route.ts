@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
       const { data: existing } = await supabase
         .from('supporters')
         .select('id')
-        .eq('id', mul_no)
+        .eq('mul_no', mul_no)
         .single()
 
       if (existing) {
@@ -68,11 +68,11 @@ export async function POST(request: NextRequest) {
         return new NextResponse('SUCCESS', { status: 200 })
       }
 
-      // 새 후원자 정보 저장
+      // 새 후원자 정보 저장 (id는 UUID로 자동 생성, mul_no는 별도 컬럼으로 저장)
       const { error } = await supabase
         .from('supporters')
         .insert({
-          id: mul_no, // mul_no를 id로 사용하여 중복 방지
+          mul_no: mul_no, // 페이앱 결제 번호를 별도 컬럼으로 저장
           name: var2 || '익명',
           amount,
           coffee_count: coffeeCount,

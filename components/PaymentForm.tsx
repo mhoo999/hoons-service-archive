@@ -51,8 +51,8 @@ export default function PaymentForm({
 
       const { paymentUrl } = await response.json()
 
-      // 페이앱 결제 페이지로 리다이렉트
-      window.location.href = paymentUrl
+      // 페이앱 결제 페이지를 새창으로 열기
+      window.open(paymentUrl, '_blank')
 
     } catch (error: any) {
       console.error('결제 처리 실패:', error)
