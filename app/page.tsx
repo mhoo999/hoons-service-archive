@@ -142,10 +142,26 @@ export default function Home() {
 
   // 두 번째 섹션으로 스크롤 이동
   const scrollToSecondSection = () => {
+    window.history.pushState(null, '', '#coffee')
     window.scrollTo({
       top: firstSectionHeight,
       behavior: 'smooth'
     })
+  }
+
+  // 커피 섹션으로 스크롤 이동 (모바일/데스크톱 공통)
+  const scrollToCoffeeSection = () => {
+    // URL 해시 업데이트
+    window.history.pushState(null, '', '#coffee')
+    
+    // 모바일: 커피 섹션 요소 찾아서 스크롤
+    const coffeeElement = document.getElementById('coffee')
+    if (coffeeElement) {
+      coffeeElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    } else {
+      // 데스크톱: 두 번째 섹션으로 스크롤
+      scrollToSecondSection()
+    }
   }
 
 
@@ -161,7 +177,7 @@ export default function Home() {
               greeting="여러모로 도움이 되는 서비스를 개발하고 있습니다. 좋은 아이디어나 필요한 서비스가 있다면 메일주세요!"
               github="https://github.com/mhoo999"
               email="mhoo999@naver.com"
-              coffeeUrl="https://buymeacoffee.com/hoonsdev"
+              onCoffeeClick={scrollToCoffeeSection}
             />
           </div>
 
@@ -172,6 +188,11 @@ export default function Home() {
               selectedService={selectedService}
               onSelectService={setSelectedService}
             />
+          </div>
+
+          {/* 커피 섹션 */}
+          <div>
+            <CoffeeSection />
           </div>
         </div>
       </div>
@@ -197,7 +218,7 @@ export default function Home() {
                 greeting="여러모로 도움이 되는 서비스를 개발하고 있습니다. 좋은 아이디어나 필요한 서비스가 있다면 메일주세요!"
                 github="https://github.com/mhoo999"
                 email="mhoo999@naver.com"
-                onCoffeeClick={scrollToSecondSection}
+                onCoffeeClick={scrollToCoffeeSection}
               />
             </div>
 
