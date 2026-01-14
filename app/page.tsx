@@ -167,8 +167,8 @@ export default function Home() {
 
   return (
     <div ref={containerRef} style={{ backgroundColor: 'var(--background)' }}>
-      {/* 모바일 뷰: 세로형 그리드 */}
-      <div className="md:hidden pt-8 px-8 pb-8">
+      {/* 모바일/태블릿 뷰: 세로형 그리드 */}
+      <div className="lg:hidden pt-8 px-8 pb-8">
         <div className="max-w-[1600px] mx-auto flex flex-col gap-8">
           {/* 프로필 섹션 */}
           <div>
@@ -198,7 +198,7 @@ export default function Home() {
       </div>
 
       {/* 데스크톱 뷰: 스크롤 기반 2페이지 구조 */}
-      <div className="hidden md:block">
+      <div className="hidden lg:block">
         {/* 첫 번째 섹션: 서비스 아카이브 */}
         <div
           ref={firstSectionRef}

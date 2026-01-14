@@ -36,7 +36,7 @@ export default function ServiceList({
 
   return (
     <div
-      className="md:h-full md:overflow-y-auto p-8"
+      className="lg:h-full lg:overflow-y-auto p-8"
       style={{
         backgroundColor: 'var(--surface)',
         border: '1px solid var(--border)'
@@ -135,9 +135,9 @@ function ServiceItem({ service, isSelected, onSelect, formatDate }: ServiceItemP
         </p>
       </button>
       
-      {/* 아코디언 콘텐츠 (모바일만 표시) */}
+      {/* 아코디언 콘텐츠 (모바일/태블릿만 표시) */}
       <div
-        className="md:hidden overflow-hidden"
+        className="lg:hidden overflow-hidden"
         style={{
           maxHeight: `${maxHeight}px`,
           opacity: maxHeight > 0 ? 1 : 0,

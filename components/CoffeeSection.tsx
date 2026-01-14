@@ -20,17 +20,19 @@ export default function CoffeeSection() {
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const pageSize = 5 // 한 번에 표시할 후원자 수
+  const initialLimit = 10 // 처음에 불러올 후원자 수
+  const pageSize = 5 // 더보기 시 한 번에 표시할 후원자 수
 
   useEffect(() => {
     // 후원자 목록 가져오기
-    fetchSupporters(1, true)
+    fetchSupporters(1, true, initialLimit)
   }, [])
 
-  const fetchSupporters = async (pageNum: number, reset: boolean = false) => {
+  const fetchSupporters = async (pageNum: number, reset: boolean = false, limit?: number) => {
     setIsLoading(true)
     try {
-      const response = await fetch(`/api/supporters?page=${pageNum}&limit=${pageSize}`)
+      const currentLimit = limit || pageSize
+      const response = await fetch(`/api/supporters?page=${pageNum}&limit=${currentLimit}`)
       if (response.ok) {
         const data = await response.json()
         if (reset) {

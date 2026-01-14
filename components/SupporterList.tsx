@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 interface Supporter {
   id: string
@@ -25,6 +25,8 @@ export default function SupporterList({
   isLoading = false
 }: SupporterListProps) {
   const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [showLoadMore, setShowLoadMore] = useState(false)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   const handleLoadMore = async () => {
     if (onLoadMore && !isLoadingMore) {
@@ -33,6 +35,29 @@ export default function SupporterList({
       setIsLoadingMore(false)
     }
   }
+
+  // 더보기 버튼 표시 여부 확인
+  useEffect(() => {
+    const checkScroll = () => {
+      if (scrollContainerRef.current) {
+        // hasMore가 true면 항상 더보기 버튼 표시
+        setShowLoadMore(hasMore)
+      }
+    }
+
+    checkScroll()
+    // 리사이즈와 콘텐츠 변경 시 재확인
+    window.addEventListener('resize', checkScroll)
+    const observer = new ResizeObserver(checkScroll)
+    if (scrollContainerRef.current) {
+      observer.observe(scrollContainerRef.current)
+    }
+
+    return () => {
+      window.removeEventListener('resize', checkScroll)
+      observer.disconnect()
+    }
+  }, [supporters, hasMore])
 
   if (supporters.length === 0) {
     return (
@@ -71,7 +96,7 @@ export default function SupporterList({
       <h2 className="text-xl font-bold mb-4 flex-shrink-0" style={{ color: 'var(--foreground)' }}>
         후원자 목록
       </h2>
-      <div className="flex flex-col gap-3 flex-1 overflow-y-auto pr-2">
+      <div ref={scrollContainerRef} className="flex flex-col gap-3 flex-1 overflow-y-auto pr-2">
         {supporters.map((supporter) => (
           <div
             key={supporter.id}
@@ -89,32 +114,22 @@ export default function SupporterList({
               e.currentTarget.style.borderColor = 'var(--border)'
             }}
           >
-            <div className="flex justify-between items-center mb-1">
-              <div className="text-sm font-semibold" style={{ color: 'var(--foreground)' }}>
-                {supporter.name}
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center gap-2">
+                <div className="text-sm font-semibold" style={{ color: 'var(--foreground)' }}>
+                  {supporter.name}
+                </div>
+                <div className="text-xs" style={{ color: 'var(--muted)' }}>
+                  ☕ × {supporter.coffeeCount}
+                </div>
               </div>
               <div className="text-sm font-bold" style={{ color: 'var(--foreground)' }}>
                 {supporter.amount.toLocaleString()}원
               </div>
             </div>
-            <div className="text-xs mb-2" style={{ color: 'var(--muted)' }}>
-              ☕ × {supporter.coffeeCount}
-            </div>
             {supporter.message && (
-              <div
-                className="p-3 mb-2 rounded-md text-sm leading-relaxed"
-                style={{
-                  backgroundColor: 'var(--surface)',
-                  border: '1px solid var(--border)',
-                  color: 'var(--foreground)'
-                }}
-              >
-                <div className="font-semibold mb-1.5" style={{ color: 'var(--foreground)' }}>
-                  {supporter.name}
-                </div>
-                <div style={{ color: 'var(--foreground)', opacity: 0.9 }}>
-                  {supporter.message}
-                </div>
+              <div className="text-sm leading-relaxed mb-2" style={{ color: 'var(--foreground)', opacity: 0.9 }}>
+                {supporter.message}
               </div>
             )}
             <div className="text-xs" style={{ color: 'var(--muted)' }}>
@@ -127,7 +142,7 @@ export default function SupporterList({
           </div>
         ))}
       </div>
-      {hasMore && (
+      {showLoadMore && (
         <button
           onClick={handleLoadMore}
           disabled={isLoadingMore || isLoading}
