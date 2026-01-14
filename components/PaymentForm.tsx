@@ -72,22 +72,33 @@ export default function PaymentForm({
       // 페이앱 결제 페이지를 새창으로 열기
       const paymentWindow = window.open(paymentUrl, '_blank')
       
-      // 새창이 닫히는지 주기적으로 확인하여 결제 완료 감지
       if (paymentWindow) {
-        const checkClosed = setInterval(() => {
+        // 결제 창이 열려있는 동안 주기적으로 후원자 목록 확인
+        const pollInterval = setInterval(() => {
+          // 결제 창이 닫혔는지 확인
           if (paymentWindow.closed) {
-            clearInterval(checkClosed)
-            // 새창이 닫혔을 때, 결제가 완료되었을 가능성이 있으므로
-            // 잠시 후 후원자 목록 새로고침 (Feedback API가 처리하는 동안 대기)
+            clearInterval(pollInterval)
+            // 결제 창이 닫혔을 때, 잠시 후 후원자 목록 새로고침
             setTimeout(() => {
               onPaymentSuccess()
               setLoading(false)
-              // 폼 초기화
               setDonorName('')
               setMessage('')
-            }, 3000) // Feedback API 처리 시간 고려하여 3초 대기
+            }, 2000)
+          } else {
+            // 결제 창이 아직 열려있으면 주기적으로 새로고침 (결제 완료 후 즉시 반영)
+            onPaymentSuccess()
           }
-        }, 500) // 0.5초마다 확인
+        }, 5000) // 5초마다 후원자 목록 확인
+
+        // 최대 5분 후 폴링 중지
+        setTimeout(() => {
+          clearInterval(pollInterval)
+          if (!paymentWindow.closed) {
+            setLoading(false)
+            alert('결제 창이 아직 열려있습니다. 결제를 완료하신 후 새로고침 버튼을 눌러주세요.')
+          }
+        }, 300000) // 5분
       } else {
         // 팝업이 차단된 경우
         alert('팝업이 차단되었습니다. 팝업을 허용해주세요.')
