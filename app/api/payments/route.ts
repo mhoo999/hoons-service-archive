@@ -24,7 +24,11 @@ const BASE_URL = getBaseUrl()
 
 // 결제 요청 정보 임시 저장소 (실제로는 데이터베이스 사용 권장)
 // 메모리 저장소이므로 서버 재시작 시 초기화됨
+// Feedback API에서 접근할 수 있도록 global에 저장
 const paymentRequests = new Map<string, any>()
+if (typeof global !== 'undefined') {
+  (global as any).paymentRequests = paymentRequests
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -59,6 +63,8 @@ export async function POST(request: NextRequest) {
     console.log('[DEBUG] NEXT_PUBLIC_BASE_URL:', process.env.NEXT_PUBLIC_BASE_URL)
 
     // 페이앱 결제 요청 API 호출
+    // var1: orderId (Feedback에서 조회용)
+    // var2: customerName (이름만 저장, 메시지는 paymentRequests에서 조회)
     const params = new URLSearchParams({
       cmd: 'payrequest',
       userid: PAYAPP_USER_ID,
@@ -68,9 +74,9 @@ export async function POST(request: NextRequest) {
       goodname: orderName,
       price: amount.toString(),
       recvphone: customerPhone || '01000000000', // 전화번호 (테스트용 기본값)
-      var1: orderId, // 주문 ID를 var1에 저장
+      var1: orderId, // 주문 ID를 var1에 저장 (Feedback에서 paymentRequests 조회용)
       var2: customerName, // 고객 이름을 var2에 저장
-      var3: message || '', // 메시지를 var3에 저장 (한글 지원)
+      // var3는 공식 지원되지 않으므로 paymentRequests에서 message 조회
       feedbackurl: feedbackUrl,
     })
     

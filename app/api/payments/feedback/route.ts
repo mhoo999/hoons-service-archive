@@ -13,8 +13,17 @@ const PAYAPP_LINK_VAL = process.env.PAYAPP_LINK_VAL || ''
  */
 export async function POST(request: NextRequest) {
   try {
+    console.log('[DEBUG] Feedback API 요청 수신 시작')
+    
     // 페이앱에서 전송한 데이터 파싱
     const formData = await request.formData()
+    
+    // 모든 formData 키 확인
+    const allKeys: string[] = []
+    formData.forEach((value, key) => {
+      allKeys.push(key)
+    })
+    console.log('[DEBUG] 받은 formData 키 목록:', allKeys)
 
     const userid = formData.get('userid') as string
     const linkkey = formData.get('linkkey') as string
@@ -25,18 +34,32 @@ export async function POST(request: NextRequest) {
     const goodname = formData.get('goodname') as string
     const var1 = formData.get('var1') as string // orderId
     const var2 = formData.get('var2') as string // customerName
-    const var3 = formData.get('var3') as string // message
+    const var3 = formData.get('var3') as string // message (공식 지원 안됨, 확인용)
 
-    console.log('페이앱 Feedback 수신:', {
+    console.log('[DEBUG] 페이앱 Feedback 수신 - 모든 데이터:', {
       userid,
       pay_state,
       mul_no,
       price,
       goodname,
-      var1,
-      var2,
-      var3,
+      var1: var1 || '(없음)',
+      var2: var2 || '(없음)',
+      var3: var3 || '(없음)',
+      'var2 길이': var2?.length || 0,
+      'var3 길이': var3?.length || 0,
     })
+    
+    // paymentRequests에서 메시지 조회 (var1이 orderId)
+    let message = null
+    if (var1) {
+      // paymentRequests는 메모리 저장소이므로 서버 재시작 시 사라질 수 있음
+      // 하지만 Feedback이 즉시 호출되면 접근 가능
+      const paymentRequest = (global as any).paymentRequests?.get?.(var1)
+      if (paymentRequest) {
+        message = paymentRequest.message
+        console.log('[DEBUG] paymentRequests에서 메시지 조회:', message)
+      }
+    }
 
     // 1. 인증 검증
     if (userid !== PAYAPP_USER_ID || linkkey !== PAYAPP_LINK_KEY || linkval !== PAYAPP_LINK_VAL) {
@@ -64,7 +87,7 @@ export async function POST(request: NextRequest) {
       // 커피 개수 계산 (5000원당 1잔)
       const amount = parseInt(price)
       const coffeeCount = Math.floor(amount / 5000)
-      console.log('[DEBUG] 계산된 값:', { amount, coffeeCount, mul_no, name: var2, message: var3 })
+      console.log('[DEBUG] 계산된 값:', { amount, coffeeCount, mul_no, name: var2, message })
 
       // 중복 방지: mul_no로 이미 저장된 결제인지 확인
       console.log('[DEBUG] 중복 체크 시작 - mul_no:', mul_no)
@@ -87,7 +110,7 @@ export async function POST(request: NextRequest) {
         name: var2 || '익명',
         amount,
         coffee_count: coffeeCount,
-        message: var3?.trim() || null, // 메시지 저장 (한글 지원)
+        message: message?.trim() || null, // 메시지 저장 (paymentRequests에서 조회)
       }
       console.log('[DEBUG] 저장할 데이터:', insertData)
 
