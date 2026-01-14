@@ -50,55 +50,85 @@ export async function POST(request: NextRequest) {
 
     // 3. 후원자 정보 저장
     try {
+      console.log('[DEBUG] Supabase 클라이언트 생성 시작')
+      console.log('[DEBUG] 환경 변수 확인:', {
+        hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+        hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+        urlPrefix: process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 20) + '...',
+      })
       const supabase = createServerClient()
+      console.log('[DEBUG] Supabase 클라이언트 생성 완료')
 
       // 커피 개수 계산 (5000원당 1잔)
       const amount = parseInt(price)
       const coffeeCount = Math.floor(amount / 5000)
+      console.log('[DEBUG] 계산된 값:', { amount, coffeeCount, mul_no, name: var2 })
 
       // 중복 방지: mul_no로 이미 저장된 결제인지 확인
-      const { data: existing } = await supabase
+      console.log('[DEBUG] 중복 체크 시작 - mul_no:', mul_no)
+      const { data: existing, error: checkError } = await supabase
         .from('supporters')
-        .select('id')
+        .select('id, mul_no')
         .eq('mul_no', mul_no)
         .single()
 
+      console.log('[DEBUG] 중복 체크 결과:', { existing, checkError })
+
       if (existing) {
-        console.log('이미 처리된 결제:', mul_no)
+        console.log('[DEBUG] 이미 처리된 결제:', mul_no)
         return new NextResponse('SUCCESS', { status: 200 })
       }
 
       // 새 후원자 정보 저장 (id는 UUID로 자동 생성, mul_no는 별도 컬럼으로 저장)
-      const { error } = await supabase
+      const insertData = {
+        mul_no: mul_no, // 페이앱 결제 번호를 별도 컬럼으로 저장
+        name: var2 || '익명',
+        amount,
+        coffee_count: coffeeCount,
+        message: null, // 메시지는 결제 폼에서 별도로 받을 수 있음
+      }
+      console.log('[DEBUG] 저장할 데이터:', insertData)
+
+      const { data: insertedData, error } = await supabase
         .from('supporters')
-        .insert({
-          mul_no: mul_no, // 페이앱 결제 번호를 별도 컬럼으로 저장
-          name: var2 || '익명',
-          amount,
-          coffee_count: coffeeCount,
-          message: null, // 메시지는 결제 폼에서 별도로 받을 수 있음
-        })
+        .insert(insertData)
+        .select()
+
+      console.log('[DEBUG] Insert 결과:', { insertedData, error })
 
       if (error) {
-        console.error('Supabase 저장 오류:', error)
+        console.error('[ERROR] Supabase 저장 오류 상세:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code,
+        })
         // 데이터베이스 오류가 있어도 페이앱에게는 SUCCESS를 반환
         // (결제는 완료되었으므로)
         return new NextResponse('SUCCESS', { status: 200 })
       }
 
-      console.log('후원자 정보 저장 완료:', { mul_no, name: var2, amount })
+      console.log('[SUCCESS] 후원자 정보 저장 완료:', { mul_no, name: var2, amount, insertedData })
 
       // 페이앱에게 성공 응답 (필수!)
       return new NextResponse('SUCCESS', { status: 200 })
 
-    } catch (dbError) {
-      console.error('데이터베이스 처리 오류:', dbError)
+    } catch (dbError: any) {
+      console.error('[ERROR] 데이터베이스 처리 오류 상세:', {
+        message: dbError?.message,
+        stack: dbError?.stack,
+        error: dbError,
+      })
       // 데이터베이스 오류가 있어도 페이앱에게는 SUCCESS를 반환
       return new NextResponse('SUCCESS', { status: 200 })
     }
 
   } catch (error: any) {
-    console.error('Feedback 처리 오류:', error)
+    console.error('[ERROR] Feedback 처리 오류 상세:', {
+      message: error?.message,
+      stack: error?.stack,
+      error: error,
+    })
     // 오류가 발생해도 페이앱에게는 FAIL을 반환하지 않음
     // (이미 결제가 완료된 상태일 수 있으므로)
     return new NextResponse('SUCCESS', { status: 200 })
