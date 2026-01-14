@@ -14,7 +14,6 @@ interface Supporter {
 interface SupporterListProps {
   supporters: Supporter[]
   onLoadMore?: () => Promise<void>
-  onRefresh?: () => Promise<void>
   hasMore?: boolean
   isLoading?: boolean
 }
@@ -22,26 +21,16 @@ interface SupporterListProps {
 export default function SupporterList({
   supporters,
   onLoadMore,
-  onRefresh,
   hasMore = false,
   isLoading = false
 }: SupporterListProps) {
   const [isLoadingMore, setIsLoadingMore] = useState(false)
-  const [isRefreshing, setIsRefreshing] = useState(false)
 
   const handleLoadMore = async () => {
     if (onLoadMore && !isLoadingMore) {
       setIsLoadingMore(true)
       await onLoadMore()
       setIsLoadingMore(false)
-    }
-  }
-
-  const handleRefresh = async () => {
-    if (onRefresh && !isRefreshing) {
-      setIsRefreshing(true)
-      await onRefresh()
-      setIsRefreshing(false)
     }
   }
 
@@ -79,37 +68,9 @@ export default function SupporterList({
         border: '1px solid var(--border)'
       }}
     >
-      <div className="flex justify-between items-center mb-4 flex-shrink-0">
-        <h2 className="text-xl font-bold" style={{ color: 'var(--foreground)' }}>
-          후원자 목록
-        </h2>
-        {onRefresh && (
-          <button
-            onClick={handleRefresh}
-            disabled={isRefreshing || isLoading}
-            className="text-xs px-3 py-1.5 font-medium transition-all rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{
-              backgroundColor: 'var(--foreground)',
-              color: 'var(--surface)',
-              border: '1px solid var(--foreground)'
-            }}
-            onMouseEnter={(e) => {
-              if (!isRefreshing && !isLoading) {
-                e.currentTarget.style.backgroundColor = 'var(--muted)'
-                e.currentTarget.style.borderColor = 'var(--muted)'
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isRefreshing && !isLoading) {
-                e.currentTarget.style.backgroundColor = 'var(--foreground)'
-                e.currentTarget.style.borderColor = 'var(--foreground)'
-              }
-            }}
-          >
-            {isRefreshing ? '새로고침 중...' : '🔄 새로고침'}
-          </button>
-        )}
-      </div>
+      <h2 className="text-xl font-bold mb-4 flex-shrink-0" style={{ color: 'var(--foreground)' }}>
+        후원자 목록
+      </h2>
       <div className="flex flex-col gap-3 flex-1 overflow-y-auto pr-2">
         {supporters.map((supporter) => (
           <div
@@ -148,7 +109,12 @@ export default function SupporterList({
                   color: 'var(--foreground)'
                 }}
               >
-                {supporter.message}
+                <div className="font-semibold mb-1.5" style={{ color: 'var(--foreground)' }}>
+                  {supporter.name}
+                </div>
+                <div style={{ color: 'var(--foreground)', opacity: 0.9 }}>
+                  {supporter.message}
+                </div>
               </div>
             )}
             <div className="text-xs" style={{ color: 'var(--muted)' }}>

@@ -73,30 +73,25 @@ export default function PaymentForm({
       const paymentWindow = window.open(paymentUrl, '_blank')
       
       if (paymentWindow) {
-        // 결제 창이 열려있는 동안 주기적으로 후원자 목록 확인
-        const pollInterval = setInterval(() => {
-          // 결제 창이 닫혔는지 확인
+        // 결제 창이 닫혔을 때만 후원자 목록 새로고침
+        const checkClosed = setInterval(() => {
           if (paymentWindow.closed) {
-            clearInterval(pollInterval)
-            // 결제 창이 닫혔을 때, 잠시 후 후원자 목록 새로고침
+            clearInterval(checkClosed)
+            // 결제 창이 닫혔을 때, 잠시 후 후원자 목록 새로고침 (Feedback API 처리 시간 고려)
             setTimeout(() => {
               onPaymentSuccess()
               setLoading(false)
               setDonorName('')
               setMessage('')
-            }, 2000)
-          } else {
-            // 결제 창이 아직 열려있으면 주기적으로 새로고침 (결제 완료 후 즉시 반영)
-            onPaymentSuccess()
+            }, 3000) // Feedback API 처리 시간 고려하여 3초 대기
           }
-        }, 5000) // 5초마다 후원자 목록 확인
+        }, 1000) // 1초마다 확인
 
         // 최대 5분 후 폴링 중지
         setTimeout(() => {
-          clearInterval(pollInterval)
+          clearInterval(checkClosed)
           if (!paymentWindow.closed) {
             setLoading(false)
-            alert('결제 창이 아직 열려있습니다. 결제를 완료하신 후 새로고침 버튼을 눌러주세요.')
           }
         }, 300000) // 5분
       } else {

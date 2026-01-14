@@ -88,7 +88,6 @@ export default function CoffeeSection() {
             <SupporterList
               supporters={supporters}
               onLoadMore={handleLoadMore}
-              onRefresh={() => fetchSupporters(1, true)}
               hasMore={hasMore}
               isLoading={isLoading}
             />
