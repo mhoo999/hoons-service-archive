@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
     const goodname = formData.get('goodname') as string
     const var1 = formData.get('var1') as string // orderId
     const var2 = formData.get('var2') as string // customerName
+    const var3 = formData.get('var3') as string // message
 
     console.log('페이앱 Feedback 수신:', {
       userid,
@@ -34,6 +35,7 @@ export async function POST(request: NextRequest) {
       goodname,
       var1,
       var2,
+      var3,
     })
 
     // 1. 인증 검증
@@ -62,7 +64,7 @@ export async function POST(request: NextRequest) {
       // 커피 개수 계산 (5000원당 1잔)
       const amount = parseInt(price)
       const coffeeCount = Math.floor(amount / 5000)
-      console.log('[DEBUG] 계산된 값:', { amount, coffeeCount, mul_no, name: var2 })
+      console.log('[DEBUG] 계산된 값:', { amount, coffeeCount, mul_no, name: var2, message: var3 })
 
       // 중복 방지: mul_no로 이미 저장된 결제인지 확인
       console.log('[DEBUG] 중복 체크 시작 - mul_no:', mul_no)
@@ -85,7 +87,7 @@ export async function POST(request: NextRequest) {
         name: var2 || '익명',
         amount,
         coffee_count: coffeeCount,
-        message: null, // 메시지는 결제 폼에서 별도로 받을 수 있음
+        message: var3?.trim() || null, // 메시지 저장 (한글 지원)
       }
       console.log('[DEBUG] 저장할 데이터:', insertData)
 

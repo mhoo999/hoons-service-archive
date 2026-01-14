@@ -51,6 +51,13 @@ export async function POST(request: NextRequest) {
       createdAt: new Date().toISOString(),
     })
 
+    // Feedback URL 생성
+    const feedbackUrl = `${BASE_URL}/api/payments/feedback`
+    console.log('[DEBUG] Feedback URL:', feedbackUrl)
+    console.log('[DEBUG] BASE_URL:', BASE_URL)
+    console.log('[DEBUG] VERCEL_URL:', process.env.VERCEL_URL)
+    console.log('[DEBUG] NEXT_PUBLIC_BASE_URL:', process.env.NEXT_PUBLIC_BASE_URL)
+
     // 페이앱 결제 요청 API 호출
     const params = new URLSearchParams({
       cmd: 'payrequest',
@@ -63,7 +70,17 @@ export async function POST(request: NextRequest) {
       recvphone: customerPhone || '01000000000', // 전화번호 (테스트용 기본값)
       var1: orderId, // 주문 ID를 var1에 저장
       var2: customerName, // 고객 이름을 var2에 저장
-      feedbackurl: `${BASE_URL}/api/payments/feedback`,
+      var3: message || '', // 메시지를 var3에 저장 (한글 지원)
+      feedbackurl: feedbackUrl,
+    })
+    
+    console.log('[DEBUG] 페이앱 요청 파라미터:', {
+      cmd: 'payrequest',
+      userid: PAYAPP_USER_ID,
+      shopname: PAYAPP_SHOP_NAME,
+      goodname: orderName,
+      price: amount.toString(),
+      feedbackurl: feedbackUrl,
     })
 
     const response = await fetch(PAYAPP_API_URL, {
