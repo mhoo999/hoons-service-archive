@@ -160,10 +160,14 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET 요청은 지원하지 않음
+// GET 요청: Feedback URL 접근 가능 여부 테스트용
 export async function GET() {
   return NextResponse.json(
-    { error: 'Method not allowed' },
-    { status: 405 }
+    { 
+      message: 'Feedback URL is accessible',
+      timestamp: new Date().toISOString(),
+      note: 'This endpoint should receive POST requests from PayApp when payment is completed'
+    },
+    { status: 200 }
   )
 }

@@ -9,13 +9,19 @@ const PAYAPP_LINK_KEY = process.env.PAYAPP_LINK_KEY || ''
 const PAYAPP_LINK_VAL = process.env.PAYAPP_LINK_VAL || ''
 const PAYAPP_SHOP_NAME = process.env.PAYAPP_SHOP_NAME || '훈스 서비스 아카이브'
 
-// BASE_URL 자동 감지 (Vercel에서는 VERCEL_URL 사용, 없으면 NEXT_PUBLIC_BASE_URL 또는 localhost)
+// BASE_URL 설정 (프로덕션 도메인 사용)
 const getBaseUrl = () => {
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`
-  }
+  // 프로덕션 도메인 우선 사용
   if (process.env.NEXT_PUBLIC_BASE_URL) {
     return process.env.NEXT_PUBLIC_BASE_URL
+  }
+  // 기본 프로덕션 도메인
+  if (process.env.NODE_ENV === 'production') {
+    return 'https://hoons-service-archive.vercel.app'
+  }
+  // 개발 환경
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`
   }
   return 'http://localhost:3000'
 }
