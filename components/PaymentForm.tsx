@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface PaymentFormProps {
   coffeeCount: number
@@ -16,6 +16,24 @@ export default function PaymentForm({
   const [message, setMessage] = useState('')
 
   const totalAmount = coffeeCount * 5000
+
+  // 결제 완료 후 새창에서 메시지를 받으면 후원자 목록 업데이트
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      // 보안을 위해 같은 origin에서만 메시지 수신
+      if (event.data?.type === 'PAYMENT_SUCCESS') {
+        console.log('결제 완료 메시지 수신:', event.data)
+        onPaymentSuccess()
+        setLoading(false)
+        setDonorName('')
+        setMessage('')
+        alert('결제가 완료되었습니다! 감사합니다.')
+      }
+    }
+
+    window.addEventListener('message', handleMessage)
+    return () => window.removeEventListener('message', handleMessage)
+  }, [onPaymentSuccess])
 
   const handlePayment = async () => {
     if (!donorName.trim()) {
@@ -49,10 +67,32 @@ export default function PaymentForm({
         throw new Error(errorData.error || '결제 요청 실패')
       }
 
-      const { paymentUrl } = await response.json()
+      const { paymentUrl, orderId } = await response.json()
 
       // 페이앱 결제 페이지를 새창으로 열기
-      window.open(paymentUrl, '_blank')
+      const paymentWindow = window.open(paymentUrl, '_blank')
+      
+      // 새창이 닫히는지 주기적으로 확인하여 결제 완료 감지
+      if (paymentWindow) {
+        const checkClosed = setInterval(() => {
+          if (paymentWindow.closed) {
+            clearInterval(checkClosed)
+            // 새창이 닫혔을 때, 결제가 완료되었을 가능성이 있으므로
+            // 잠시 후 후원자 목록 새로고침 (Feedback API가 처리하는 동안 대기)
+            setTimeout(() => {
+              onPaymentSuccess()
+              setLoading(false)
+              // 폼 초기화
+              setDonorName('')
+              setMessage('')
+            }, 3000) // Feedback API 처리 시간 고려하여 3초 대기
+          }
+        }, 500) // 0.5초마다 확인
+      } else {
+        // 팝업이 차단된 경우
+        alert('팝업이 차단되었습니다. 팝업을 허용해주세요.')
+        setLoading(false)
+      }
 
     } catch (error: any) {
       console.error('결제 처리 실패:', error)
@@ -95,7 +135,7 @@ export default function PaymentForm({
               // 자동완성 목록 클릭을 위한 지연 처리
               setTimeout(() => {
                 // blur 후에도 focus가 유지되면 (자동완성 클릭) 스타일 유지
-                if (document.activeElement !== e.currentTarget) {
+                if (e.currentTarget && document.activeElement !== e.currentTarget) {
                   e.currentTarget.style.borderColor = 'var(--border)'
                   e.currentTarget.style.backgroundColor = 'var(--surface)'
                 }
