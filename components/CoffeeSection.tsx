@@ -62,7 +62,7 @@ export default function CoffeeSection() {
   }
 
   return (
-    <div id="coffee" className="h-full pt-8 md:pt-12 lg:pt-16 px-8 md:px-12 lg:px-16 pb-24 md:pb-28 lg:pb-32 flex items-center overflow-hidden" style={{ backgroundColor: 'var(--background)' }}>
+    <div id="coffee" className="h-full pt-8 md:pt-12 lg:pt-16 px-0 lg:px-16 pb-24 md:pb-28 lg:pb-32 flex items-center overflow-hidden" style={{ backgroundColor: 'var(--background)' }}>
       <div className="max-w-[1600px] mx-auto w-full h-full flex flex-col">
         <div className="text-center mb-6 flex-shrink-0">
           <h1 className="text-4xl lg:text-5xl font-bold mb-2" style={{ color: 'var(--foreground)' }}>
