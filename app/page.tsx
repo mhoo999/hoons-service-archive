@@ -99,9 +99,38 @@ export default function Home() {
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
+    
+    // 두 번째 섹션으로 스크롤 이동 함수 (useEffect 내부에서 정의)
+    const scrollToCoffeeSection = () => {
+      const height = window.innerHeight
+      window.scrollTo({
+        top: height,
+        behavior: 'smooth'
+      })
+    }
+    
+    // URL 해시 처리: #coffee로 바로 이동
+    const handleHashChange = () => {
+      if (window.location.hash === '#coffee') {
+        setTimeout(() => {
+          scrollToCoffeeSection()
+        }, 100)
+      }
+    }
+    
+    // 초기 로드 시 해시 확인
+    if (window.location.hash === '#coffee') {
+      setTimeout(() => {
+        scrollToCoffeeSection()
+      }, 300) // 컴포넌트 마운트 후 스크롤
+    }
+    
+    window.addEventListener('hashchange', handleHashChange)
+    
     return () => {
       window.removeEventListener('scroll', handleScroll)
       window.removeEventListener('resize', updateHeight)
+      window.removeEventListener('hashchange', handleHashChange)
     }
   }, [])
 
