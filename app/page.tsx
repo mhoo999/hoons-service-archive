@@ -39,6 +39,14 @@ const initialServices: Service[] = [
     url: 'https://detail-page-builder.vercel.app/',
     updatedAt: '로딩 중...',
     repository: 'https://github.com/mhoo999/detail-page-builder'
+  },
+  {
+    id: '5',
+    name: '다이스 플리퍼',
+    description: '커스터마이즈 가능한 주사위 시뮬레이터',
+    url: 'https://dice-flipper.vercel.app/',
+    updatedAt: '로딩 중...',
+    repository: 'https://github.com/mhoo999/dice-flipper'
   }
 ]
 
