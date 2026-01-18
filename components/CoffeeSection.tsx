@@ -74,7 +74,7 @@ export default function CoffeeSection() {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-stretch flex-1 min-h-0">
-          <div className="flex-1 min-w-0 w-full lg:w-auto flex flex-col gap-4">
+          <div className="flex-1 min-w-0 w-full lg:w-auto flex flex-col gap-4 lg:flex-shrink-0">
             <CoffeeSelector
               count={coffeeCount}
               onCountChange={setCoffeeCount}
@@ -86,7 +86,7 @@ export default function CoffeeSection() {
             />
           </div>
 
-          <div className="flex-1 min-w-0 w-full lg:w-auto flex flex-col">
+          <div className="flex-1 min-w-0 w-full lg:w-auto flex flex-col min-h-0 max-h-[600px] lg:max-h-full">
             <SupporterList
               supporters={supporters}
               onLoadMore={handleLoadMore}
