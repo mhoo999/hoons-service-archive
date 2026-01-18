@@ -107,34 +107,64 @@ export default function Home() {
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
-    
+
     // 두 번째 섹션으로 스크롤 이동 함수 (useEffect 내부에서 정의)
-    const scrollToCoffeeSection = () => {
-      const height = window.innerHeight
-      window.scrollTo({
-        top: height,
-        behavior: 'smooth'
-      })
+    const scrollToCoffeeSectionInternal = () => {
+      const coffeeElement = document.getElementById('coffee')
+      if (coffeeElement) {
+        const targetPosition = coffeeElement.offsetTop
+        window.scrollTo({
+          top: targetPosition,
+          behavior: 'smooth'
+        })
+        return targetPosition
+      }
+      return null
     }
-    
+
     // URL 해시 처리: #coffee로 바로 이동
     const handleHashChange = () => {
       if (window.location.hash === '#coffee') {
         setTimeout(() => {
-          scrollToCoffeeSection()
+          scrollToCoffeeSectionInternal()
         }, 100)
       }
     }
-    
+
     // 초기 로드 시 해시 확인
     if (window.location.hash === '#coffee') {
+      // 첫 스크롤 실행
       setTimeout(() => {
-        scrollToCoffeeSection()
-      }, 300) // 컴포넌트 마운트 후 스크롤
+        const targetPosition = scrollToCoffeeSectionInternal()
+
+        // 레이아웃 변경을 감지하고 위치 보정
+        if (targetPosition !== null) {
+          const checkAndCorrect = () => {
+            const coffeeElement = document.getElementById('coffee')
+            if (coffeeElement) {
+              const currentTarget = coffeeElement.offsetTop
+              const currentScroll = window.scrollY
+
+              // 위치가 틀어졌다면 다시 스크롤
+              if (Math.abs(currentScroll - currentTarget) > 50) {
+                window.scrollTo({
+                  top: currentTarget,
+                  behavior: 'smooth'
+                })
+              }
+            }
+          }
+
+          // 1초, 1.5초, 2초 후 위치 확인 및 보정
+          setTimeout(checkAndCorrect, 1000)
+          setTimeout(checkAndCorrect, 1500)
+          setTimeout(checkAndCorrect, 2000)
+        }
+      }, 800) // 컴포넌트 마운트 및 데이터 로딩 대기
     }
-    
+
     window.addEventListener('hashchange', handleHashChange)
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll)
       window.removeEventListener('resize', updateHeight)
