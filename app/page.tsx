@@ -47,6 +47,14 @@ const initialServices: Service[] = [
     url: 'https://dice-flipper.vercel.app/',
     updatedAt: '로딩 중...',
     repository: 'https://github.com/mhoo999/dice-flipper'
+  },
+  {
+    id: '6',
+    name: '투두 타이머',
+    description: '할 일 관리와 시간 추적을 결합한 생산성 도구',
+    url: 'https://todo-timer-ten.vercel.app/',
+    updatedAt: '로딩 중...',
+    repository: 'https://github.com/mhoo999/todo-timer'
   }
 ]
 
