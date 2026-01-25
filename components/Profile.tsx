@@ -14,7 +14,7 @@ export default function Profile({
   greeting,
   github,
   email,
-  coffeeUrl = 'https://need-coffee.vercel.app/',
+  coffeeUrl = 'https://buymeacoffee.com/hoonsdev',
   onCoffeeClick
 }: ProfileProps) {
   const githubUrl = github.startsWith('http') ? github : `https://github.com/${github}`
@@ -84,8 +84,6 @@ export default function Profile({
         </div>
       </div>
 
-      {/* [COFFEE_SECTION_START] 커피 섹션 복원 시 주석 해제 */}
-      {/*
       <div className="mt-auto">
         {onCoffeeClick ? (
           <button
@@ -113,8 +111,6 @@ export default function Profile({
           </a>
         )}
       </div>
-      */}
-      {/* [COFFEE_SECTION_END] */}
     </div>
   )
 }
