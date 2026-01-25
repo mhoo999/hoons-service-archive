@@ -218,12 +218,12 @@ export default function Home() {
         <div className="max-w-[1600px] mx-auto flex flex-col gap-8">
           {/* 프로필 섹션 */}
           <div>
+            {/* [COFFEE_SECTION] Profile의 onCoffeeClick prop 복원 시 추가 */}
             <Profile
               nickname="thinghoon"
               greeting="여러모로 도움이 되는 서비스를 개발하고 있습니다. 좋은 아이디어나 필요한 서비스가 있다면 메일주세요!"
               github="https://github.com/mhoo999"
               email="mhoo999@naver.com"
-              {/* onCoffeeClick={scrollToCoffeeSection} */} {/* [COFFEE_SECTION] */}
             />
           </div>
 
@@ -255,12 +255,12 @@ export default function Home() {
           <div className="max-w-[1600px] mx-auto h-[calc(100vh-8rem)] flex gap-8 lg:gap-12">
             {/* 왼쪽: 프로필 섹션 */}
             <div className="w-80 lg:w-96 flex-shrink-0">
+              {/* [COFFEE_SECTION] Profile의 onCoffeeClick prop 복원 시 추가 */}
               <Profile
                 nickname="thinghoon"
                 greeting="여러모로 도움이 되는 서비스를 개발하고 있습니다. 좋은 아이디어나 필요한 서비스가 있다면 메일주세요!"
                 github="https://github.com/mhoo999"
                 email="mhoo999@naver.com"
-                {/* onCoffeeClick={scrollToCoffeeSection} */} {/* [COFFEE_SECTION] */}
               />
             </div>
 
