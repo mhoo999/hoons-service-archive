@@ -14,6 +14,55 @@ export default function ServiceList({
   selectedService,
   onSelectService
 }: ServiceListProps) {
+  const [favorites, setFavorites] = useState<string[]>([])
+
+  // 로컬스토리지에서 즐겨찾기 불러오기
+  useEffect(() => {
+    const stored = localStorage.getItem('serviceFavorites')
+    if (stored) {
+      try {
+        setFavorites(JSON.parse(stored))
+      } catch (e) {
+        console.error('Failed to load favorites:', e)
+      }
+    }
+  }, [])
+
+  // 즐겨찾기 토글
+  const toggleFavorite = (serviceId: string) => {
+    setFavorites(prev => {
+      const newFavorites = prev.includes(serviceId)
+        ? prev.filter(id => id !== serviceId)
+        : [...prev, serviceId]
+
+      // 로컬스토리지에 저장
+      localStorage.setItem('serviceFavorites', JSON.stringify(newFavorites))
+      return newFavorites
+    })
+  }
+
+  // 서비스 정렬: 즐겨찾기 먼저, 나머지는 업데이트 날짜순
+  const sortedServices = [...services].sort((a, b) => {
+    const aIsFavorite = favorites.includes(a.id)
+    const bIsFavorite = favorites.includes(b.id)
+
+    // 즐겨찾기 우선
+    if (aIsFavorite && !bIsFavorite) return -1
+    if (!aIsFavorite && bIsFavorite) return 1
+
+    // 둘 다 즐겨찾기이거나 둘 다 아닌 경우, 업데이트 날짜순 정렬
+    if (a.updatedAt === '로딩 중...' || a.updatedAt === '레포지토리 없음' || a.updatedAt === '정보 없음') return 1
+    if (b.updatedAt === '로딩 중...' || b.updatedAt === '레포지토리 없음' || b.updatedAt === '정보 없음') return -1
+
+    try {
+      const dateA = new Date(a.updatedAt).getTime()
+      const dateB = new Date(b.updatedAt).getTime()
+      return dateB - dateA // 최신순
+    } catch {
+      return 0
+    }
+  })
+
   const formatDate = (dateStr: string) => {
     if (dateStr === '로딩 중...' || dateStr === '레포지토리 없음' || dateStr === '정보 없음') {
       return dateStr
@@ -49,15 +98,18 @@ export default function ServiceList({
         SERVICES
       </h2>
       <div className="space-y-3">
-        {services.map((service) => {
+        {sortedServices.map((service) => {
           const isSelected = selectedService?.id === service.id
-          
+          const isFavorite = favorites.includes(service.id)
+
           return (
             <ServiceItem
               key={service.id}
               service={service}
               isSelected={isSelected}
+              isFavorite={isFavorite}
               onSelect={() => handleServiceClick(service)}
+              onToggleFavorite={() => toggleFavorite(service.id)}
               formatDate={formatDate}
             />
           )
@@ -70,11 +122,13 @@ export default function ServiceList({
 interface ServiceItemProps {
   service: Service
   isSelected: boolean
+  isFavorite: boolean
   onSelect: () => void
+  onToggleFavorite: () => void
   formatDate: (dateStr: string) => string
 }
 
-function ServiceItem({ service, isSelected, onSelect, formatDate }: ServiceItemProps) {
+function ServiceItem({ service, isSelected, isFavorite, onSelect, onToggleFavorite, formatDate }: ServiceItemProps) {
   const contentRef = useRef<HTMLDivElement>(null)
   const [maxHeight, setMaxHeight] = useState<number>(0)
 
@@ -115,25 +169,44 @@ function ServiceItem({ service, isSelected, onSelect, formatDate }: ServiceItemP
         backgroundColor: isSelected ? 'var(--foreground)' : 'transparent'
       }}
     >
-      <button
-        onClick={onSelect}
-        className="w-full text-left p-4 transition-colors duration-200"
-        style={{
-          backgroundColor: 'transparent',
-          color: isSelected ? 'var(--surface)' : 'var(--foreground)'
-        }}
-      >
-        <h3 className="font-medium mb-2 text-sm">{service.name}</h3>
-        <p
-          className="text-xs"
+      <div className="flex items-stretch">
+        <button
+          onClick={onSelect}
+          className="flex-1 text-left p-4 transition-colors duration-200"
           style={{
-            color: isSelected ? 'var(--surface)' : 'var(--muted)',
-            opacity: 0.8
+            backgroundColor: 'transparent',
+            color: isSelected ? 'var(--surface)' : 'var(--foreground)'
           }}
         >
-          {formatDate(service.updatedAt)}
-        </p>
-      </button>
+          <h3 className="font-medium mb-2 text-sm">{service.name}</h3>
+          <p
+            className="text-xs"
+            style={{
+              color: isSelected ? 'var(--surface)' : 'var(--muted)',
+              opacity: 0.8
+            }}
+          >
+            {formatDate(service.updatedAt)}
+          </p>
+        </button>
+
+        {/* 즐겨찾기 버튼 */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            onToggleFavorite()
+          }}
+          className="px-3 transition-opacity hover:opacity-60"
+          style={{
+            backgroundColor: 'transparent',
+            color: isSelected ? 'var(--surface)' : 'var(--foreground)',
+            fontSize: '1.25rem'
+          }}
+          aria-label={isFavorite ? '즐겨찾기 해제' : '즐겨찾기 추가'}
+        >
+          {isFavorite ? '★' : '☆'}
+        </button>
+      </div>
       
       {/* 아코디언 콘텐츠 (모바일/태블릿만 표시) */}
       <div
