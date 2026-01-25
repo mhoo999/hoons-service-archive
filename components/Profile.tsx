@@ -84,6 +84,8 @@ export default function Profile({
         </div>
       </div>
 
+      {/* [COFFEE_SECTION_START] 커피 섹션 복원 시 주석 해제 */}
+      {/*
       <div className="mt-auto">
         {onCoffeeClick ? (
           <button
@@ -111,6 +113,8 @@ export default function Profile({
           </a>
         )}
       </div>
+      */}
+      {/* [COFFEE_SECTION_END] */}
     </div>
   )
 }
