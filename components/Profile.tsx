@@ -94,7 +94,7 @@ export default function Profile({
               color: 'var(--surface)'
             }}
           >
-            개발자 커피 한잔 사주기
+            방명록 남기기
           </button>
         ) : (
           <a
