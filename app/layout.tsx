@@ -21,8 +21,6 @@ export default function RootLayout({
           crossOrigin="anonymous"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"
         />
-        {/* [COFFEE_SECTION_START] 커피 섹션 복원 시 주석 해제 */}
-        {/*
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -32,8 +30,6 @@ export default function RootLayout({
             `,
           }}
         />
-        */}
-        {/* [COFFEE_SECTION_END] */}
       </head>
       <body className="antialiased">
         {children}
