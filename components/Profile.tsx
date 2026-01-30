@@ -4,6 +4,7 @@ interface ProfileProps {
   greeting: string
   github: string
   email?: string
+  xUsername?: string
   coffeeUrl?: string
   onCoffeeClick?: () => void
 }
@@ -14,6 +15,7 @@ export default function Profile({
   greeting,
   github,
   email,
+  xUsername,
   coffeeUrl = 'https://buymeacoffee.com/hoonsdev',
   onCoffeeClick
 }: ProfileProps) {
@@ -79,6 +81,21 @@ export default function Profile({
                 <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
               </svg>
               {email}
+            </a>
+          )}
+
+          {xUsername && (
+            <a
+              href={`https://x.com/${xUsername}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-sm transition-opacity hover:opacity-60"
+              style={{ color: 'var(--foreground)' }}
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              </svg>
+              @{xUsername}
             </a>
           )}
         </div>

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Profile from '@/components/Profile'
 import ServiceList from '@/components/ServiceList'
 import ServicePreview from '@/components/ServicePreview'
-import CommentSection from '@/components/CommentSection'
+// import CoffeeSection from '@/components/CoffeeSection' // [COFFEE_SECTION] 나중에 복원 가능
 import { Service } from '@/types/service'
 
 const initialServices: Service[] = [
@@ -61,11 +61,11 @@ const initialServices: Service[] = [
 export default function Home() {
   const [services, setServices] = useState<Service[]>(initialServices)
   const [selectedService, setSelectedService] = useState<Service | null>(null)
-  const [scrollY, setScrollY] = useState(0)
-  const [firstSectionHeight, setFirstSectionHeight] = useState(1000)
+  // const [scrollY, setScrollY] = useState(0) // [COFFEE_SECTION] 커피 섹션용
+  // const [firstSectionHeight, setFirstSectionHeight] = useState(1000) // [COFFEE_SECTION] 커피 섹션용
   const containerRef = useRef<HTMLDivElement>(null)
-  const firstSectionRef = useRef<HTMLDivElement>(null)
-  const secondSectionRef = useRef<HTMLDivElement>(null)
+  // const firstSectionRef = useRef<HTMLDivElement>(null) // [COFFEE_SECTION] 커피 섹션용
+  // const secondSectionRef = useRef<HTMLDivElement>(null) // [COFFEE_SECTION] 커피 섹션용
 
   useEffect(() => {
     const fetchCommitDates = async () => {
@@ -101,6 +101,8 @@ export default function Home() {
     fetchCommitDates()
   }, [])
 
+  // [COFFEE_SECTION_START] 커피 섹션 복원 시 주석 해제
+  /*
   useEffect(() => {
     // 클라이언트에서만 높이 계산
     const updateHeight = () => {
@@ -117,10 +119,10 @@ export default function Home() {
     window.addEventListener('scroll', handleScroll, { passive: true })
 
     // 두 번째 섹션으로 스크롤 이동 함수 (useEffect 내부에서 정의)
-    const scrollToCommentsSectionInternal = () => {
-      const commentsElement = document.getElementById('comments')
-      if (commentsElement) {
-        const targetPosition = commentsElement.offsetTop
+    const scrollToCoffeeSectionInternal = () => {
+      const coffeeElement = document.getElementById('coffee')
+      if (coffeeElement) {
+        const targetPosition = coffeeElement.offsetTop
         window.scrollTo({
           top: targetPosition,
           behavior: 'smooth'
@@ -130,27 +132,27 @@ export default function Home() {
       return null
     }
 
-    // URL 해시 처리: #comments로 바로 이동
+    // URL 해시 처리: #coffee로 바로 이동
     const handleHashChange = () => {
-      if (window.location.hash === '#comments') {
+      if (window.location.hash === '#coffee') {
         setTimeout(() => {
-          scrollToCommentsSectionInternal()
+          scrollToCoffeeSectionInternal()
         }, 100)
       }
     }
 
     // 초기 로드 시 해시 확인
-    if (window.location.hash === '#comments') {
+    if (window.location.hash === '#coffee') {
       // 첫 스크롤 실행
       setTimeout(() => {
-        const targetPosition = scrollToCommentsSectionInternal()
+        const targetPosition = scrollToCoffeeSectionInternal()
 
         // 레이아웃 변경을 감지하고 위치 보정
         if (targetPosition !== null) {
           const checkAndCorrect = () => {
-            const commentsElement = document.getElementById('comments')
-            if (commentsElement) {
-              const currentTarget = commentsElement.offsetTop
+            const coffeeElement = document.getElementById('coffee')
+            if (coffeeElement) {
+              const currentTarget = coffeeElement.offsetTop
               const currentScroll = window.scrollY
 
               // 위치가 틀어졌다면 다시 스크롤
@@ -179,7 +181,11 @@ export default function Home() {
       window.removeEventListener('hashchange', handleHashChange)
     }
   }, [])
+  */
+  // [COFFEE_SECTION_END]
 
+  // [COFFEE_SECTION_START] 커피 섹션 복원 시 주석 해제
+  /*
   // 첫 번째 섹션의 50% 지점에서 전환
   const transitionPoint = firstSectionHeight * 0.5
 
@@ -188,27 +194,29 @@ export default function Home() {
 
   // 두 번째 섹션으로 스크롤 이동
   const scrollToSecondSection = () => {
-    window.history.pushState(null, '', '#comments')
+    window.history.pushState(null, '', '#coffee')
     window.scrollTo({
       top: firstSectionHeight,
       behavior: 'smooth'
     })
   }
 
-  // 댓글 섹션으로 스크롤 이동 (모바일/데스크톱 공통)
-  const scrollToCommentsSection = () => {
+  // 커피 섹션으로 스크롤 이동 (모바일/데스크톱 공통)
+  const scrollToCoffeeSection = () => {
     // URL 해시 업데이트
-    window.history.pushState(null, '', '#comments')
+    window.history.pushState(null, '', '#coffee')
 
-    // 모바일: 댓글 섹션 요소 찾아서 스크롤
-    const commentsElement = document.getElementById('comments')
-    if (commentsElement) {
-      commentsElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    // 모바일: 커피 섹션 요소 찾아서 스크롤
+    const coffeeElement = document.getElementById('coffee')
+    if (coffeeElement) {
+      coffeeElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
     } else {
       // 데스크톱: 두 번째 섹션으로 스크롤
       scrollToSecondSection()
     }
   }
+  */
+  // [COFFEE_SECTION_END]
 
 
   return (
@@ -218,12 +226,13 @@ export default function Home() {
         <div className="max-w-[1600px] mx-auto flex flex-col gap-8">
           {/* 프로필 섹션 */}
           <div>
+            {/* [COFFEE_SECTION] Profile의 onCoffeeClick prop 복원 시 추가 */}
             <Profile
               nickname="thinghoon"
               greeting="여러모로 도움이 되는 서비스를 개발하고 있습니다. 좋은 아이디어나 필요한 서비스가 있다면 메일주세요!"
               github="https://github.com/mhoo999"
               email="mhoo999@naver.com"
-              onCoffeeClick={scrollToCommentsSection}
+              xUsername="thinghoon"
             />
           </div>
 
@@ -236,35 +245,32 @@ export default function Home() {
             />
           </div>
 
-          {/* 댓글 섹션 */}
+          {/* [COFFEE_SECTION_START] 커피 섹션 복원 시 주석 해제 */}
+          {/*
           <div>
-            <CommentSection />
+            <CoffeeSection />
           </div>
+          */}
+          {/* [COFFEE_SECTION_END] */}
         </div>
       </div>
 
-      {/* 데스크톱 뷰: 스크롤 기반 2페이지 구조 */}
+      {/* 데스크톱 뷰 */}
       <div className="hidden lg:block">
-        {/* 첫 번째 섹션: 서비스 아카이브 */}
+        {/* 서비스 아카이브 */}
         <div
-          ref={firstSectionRef}
-          className="fixed inset-0 p-8 md:p-12 lg:p-16"
-          style={{
-            opacity: currentPageIndex === 0 ? 1 : 0,
-            pointerEvents: currentPageIndex === 0 ? 'auto' : 'none',
-            zIndex: currentPageIndex === 0 ? 10 : 0,
-            transition: 'opacity 0.3s ease'
-          }}
+          className="p-8 md:p-12 lg:p-16"
         >
           <div className="max-w-[1600px] mx-auto h-[calc(100vh-8rem)] flex gap-8 lg:gap-12">
             {/* 왼쪽: 프로필 섹션 */}
             <div className="w-80 lg:w-96 flex-shrink-0">
+              {/* [COFFEE_SECTION] Profile의 onCoffeeClick prop 복원 시 추가 */}
               <Profile
                 nickname="thinghoon"
                 greeting="여러모로 도움이 되는 서비스를 개발하고 있습니다. 좋은 아이디어나 필요한 서비스가 있다면 메일주세요!"
                 github="https://github.com/mhoo999"
                 email="mhoo999@naver.com"
-                onCoffeeClick={scrollToCommentsSection}
+                xUsername="thinghoon"
               />
             </div>
 
@@ -287,7 +293,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* 두 번째 섹션: 방명록 */}
+        {/* [COFFEE_SECTION_START] 커피 섹션 복원 시 주석 해제 */}
+        {/*
         <div
           ref={secondSectionRef}
           className="relative"
@@ -299,10 +306,9 @@ export default function Home() {
             transition: 'opacity 0.3s ease'
           }}
         >
-          <CommentSection />
+          <CoffeeSection />
         </div>
 
-        {/* 닷 인디케이터 */}
         <div
           className="fixed bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-row gap-3"
           style={{ zIndex: 20 }}
@@ -326,6 +332,8 @@ export default function Home() {
             aria-label="두 번째 페이지"
           />
         </div>
+        */}
+        {/* [COFFEE_SECTION_END] */}
       </div>
     </div>
   )
