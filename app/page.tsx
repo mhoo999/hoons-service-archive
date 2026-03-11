@@ -55,6 +55,14 @@ const initialServices: Service[] = [
     url: 'https://todo-timer-ten.vercel.app/',
     updatedAt: '로딩 중...',
     repository: 'https://github.com/mhoo999/todo-timer'
+  },
+  {
+    id: '7',
+    name: '룰렛',
+    description: '룰렛 휠 시뮬레이터',
+    url: 'https://wheel-z8ib.vercel.app/',
+    updatedAt: '로딩 중...',
+    repository: 'https://github.com/mhoo999/wheel'
   }
 ]
 
