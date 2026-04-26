@@ -63,6 +63,14 @@ const initialServices: Service[] = [
     url: 'https://wheel-z8ib.vercel.app/',
     updatedAt: '로딩 중...',
     repository: 'https://github.com/mhoo999/wheel'
+  },
+  {
+    id: '8',
+    name: '레디 셋 롤',
+    description: '경마 기반 추첨 시뮬레이터 서비스',
+    url: 'https://ready-set-roll.vercel.app/',
+    updatedAt: '로딩 중...',
+    repository: 'https://github.com/mhoo999/ready-set-roll'
   }
 ]
 
